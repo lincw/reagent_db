@@ -1,0 +1,7 @@
+plasmid_id,plasmid_name,plasmid_type,plasmid_express_organism,plasmid_description
+PLS001,pET28a-GFP,Expression,E. coli,GFP expression vector with T7 promoter and His-tag
+PLS002,pGEX-6P-1-GST-TEV,Expression,E. coli,GST fusion protein expression with TEV cleavage site
+PLS003,pCMV-SPORT6,Mammalian Expression,Mammalian cells,CMV promoter for high-level expression in mammalian cells
+PLS004,pRS416-URA3,Shuttle,S. cerevisiae / E. coli,Yeast centromere vector with URA3 selectable marker
+PLS005,pUC19-Amp,Cloning,E. coli,High-copy cloning vector with ampicillin resistance
+PLS006,pLenti-CMV-GFP-Puro,Viral,Mammalian cells,Lentiviral vector with GFP and puromycin resistance

@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Entry - Reagent Database</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .header {
+            margin-bottom: 2rem;
+        }
+        .form-container {
+            margin-bottom: 2rem;
+        }
+        .card {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="text-center">Add New Entry</h1>
+            <p class="text-center text-muted">Add new reagents, ORFs, plasmids, or organisms to the database</p>
+            <div class="text-center">
+                <a href="/" class="btn btn-secondary">Back to Search</a>
+            </div>
+        </div>
+        
+        <div class="form-container">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="card-title mb-0">Entry Type</h4>
+                        <button id="resetTypeForm" class="btn btn-outline-secondary">Reset</button>
+                    </div>
+                    <form id="entryTypeForm">
+                        <div class="mb-3">
+                            <label for="entryType" class="form-label">Select Entry Type</label>
+                            <select class="form-select" id="entryType" required>
+                                <option value="" selected disabled>Select entry type</option>
+                                <option value="orf">Gene/ORF</option>
+                                <option value="plasmid">Plasmid</option>
+                                <option value="organism">Organism</option>
+                                <option value="freezer">Freezer</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- ORF Form -->
+            <div id="orfForm" class="card d-none">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="card-title mb-0">Add New ORF</h4>
+                        <button id="resetOrfForm" class="btn btn-outline-secondary">Reset Form</button>
+                    </div>
+                    <form id="orfEntryForm" class="row g-3">
+                        <input type="hidden" name="entry_type" value="orf">
+                        
+                        <div class="col-md-4">
+                            <label for="orf_id" class="form-label">ORF ID*</label>
+                            <input type="text" class="form-control" id="orf_id" name="orf_id" required>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="orf_name" class="form-label">ORF Name*</label>
+                            <input type="text" class="form-control" id="orf_name" name="orf_name" required>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="orf_organism_id" class="form-label">Organism ID</label>
+                            <select class="form-select" id="orf_organism_id" name="orf_organism_id">
+                                <option value="">Select organism</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-12">
+                            <label for="orf_annotation" class="form-label">Annotation</label>
+                            <input type="text" class="form-control" id="orf_annotation" name="orf_annotation">
+                        </div>
+                        
+                        <div class="col-12">
+                            <label for="orf_sequence" class="form-label">Sequence</label>
+                            <textarea class="form-control" id="orf_sequence" name="orf_sequence" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="orf_with_stop" name="orf_with_stop">
+                                <label class="form-check-label" for="orf_with_stop">With Stop Codon</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="orf_open" name="orf_open">
+                                <label class="form-check-label" for="orf_open">Open ORF</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="orf_length_bp" class="form-label">Length (bp)</label>
+                            <input type="number" class="form-control" id="orf_length_bp" name="orf_length_bp">
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="orf_entrez_id" class="form-label">Entrez ID</label>
+                            <input type="text" class="form-control" id="orf_entrez_id" name="orf_entrez_id">
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="orf_ensembl_id" class="form-label">Ensembl ID</label>
+                            <input type="text" class="form-control" id="orf_ensembl_id" name="orf_ensembl_id">
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="orf_uniprot_id" class="form-label">UniProt ID</label>
+                            <input type="text" class="form-control" id="orf_uniprot_id" name="orf_uniprot_id">
+                        </div>
+                        
+                        <div class="col-12">
+                            <label for="orf_ref_url" class="form-label">Reference URL</label>
+                            <input type="url" class="form-control" id="orf_ref_url" name="orf_ref_url">
+                        </div>
+                        
+                        <hr class="my-3">
+                        <h5>Position Information (Optional)</h5>
+                        
+                        <div class="col-md-4">
+                            <label for="plate" class="form-label">Plate</label>
+                            <input type="text" class="form-control" id="plate" name="plate">
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="well" class="form-label">Well</label>
+                            <input type="text" class="form-control" id="well" name="well">
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="freezer_id" class="form-label">Freezer ID</label>
+                            <select class="form-select" id="freezer_id" name="freezer_id">
+                                <option value="">Select freezer</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="plasmid_id" class="form-label">Plasmid ID</label>
+                            <select class="form-select" id="plasmid_id" name="plasmid_id">
+                                <option value="">Select plasmid</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="orf_create_date" class="form-label">Create Date</label>
+                            <input type="date" class="form-control" id="orf_create_date" name="orf_create_date">
+                        </div>
+                        
+                        <div class="col-12 text-end">
+                            <button type="submit" class="btn btn-primary">Save ORF</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Plasmid Form -->
+            <div id="plasmidForm" class="card d-none">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="card-title mb-0">Add New Plasmid</h4>
+                        <button id="resetPlasmidForm" class="btn btn-outline-secondary">Reset Form</button>
+                    </div>
+                    <form id="plasmidEntryForm" class="row g-3">
+                        <input type="hidden" name="entry_type" value="plasmid">
+                        
+                        <div class="col-md-6">
+                            <label for="plasmid_id" class="form-label">Plasmid ID*</label>
+                            <input type="text" class="form-control" id="plasmid_id" name="plasmid_id" required>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="plasmid_name" class="form-label">Plasmid Name*</label>
+                            <input type="text" class="form-control" id="plasmid_name" name="plasmid_name" required>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="plasmid_type" class="form-label">Plasmid Type</label>
+                            <input type="text" class="form-control" id="plasmid_type" name="plasmid_type">
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="plasmid_express_organism" class="form-label">Expression Organism</label>
+                            <input type="text" class="form-control" id="plasmid_express_organism" name="plasmid_express_organism">
+                        </div>
+                        
+                        <div class="col-12">
+                            <label for="plasmid_description" class="form-label">Description</label>
+                            <textarea class="form-control" id="plasmid_description" name="plasmid_description" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="col-12 text-end">
+                            <button type="submit" class="btn btn-primary">Save Plasmid</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Organism Form -->
+            <div id="organismForm" class="card d-none">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="card-title mb-0">Add New Organism</h4>
+                        <button id="resetOrganismForm" class="btn btn-outline-secondary">Reset Form</button>
+                    </div>
+                    <form id="organismEntryForm" class="row g-3">
+                        <input type="hidden" name="entry_type" value="organism">
+                        
+                        <div class="col-md-6">
+                            <label for="organism_id" class="form-label">Organism ID*</label>
+                            <input type="text" class="form-control" id="organism_id" name="organism_id" required>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="organism_name" class="form-label">Organism Name*</label>
+                            <input type="text" class="form-control" id="organism_name" name="organism_name" required>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="organism_genus" class="form-label">Genus</label>
+                            <input type="text" class="form-control" id="organism_genus" name="organism_genus">
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="organism_species" class="form-label">Species</label>
+                            <input type="text" class="form-control" id="organism_species" name="organism_species">
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="organism_strain" class="form-label">Strain</label>
+                            <input type="text" class="form-control" id="organism_strain" name="organism_strain">
+                        </div>
+                        
+                        <div class="col-12 text-end">
+                            <button type="submit" class="btn btn-primary">Save Organism</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Freezer Form -->
+            <div id="freezerForm" class="card d-none">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="card-title mb-0">Add New Freezer</h4>
+                        <button id="resetFreezerForm" class="btn btn-outline-secondary">Reset Form</button>
+                    </div>
+                    <form id="freezerEntryForm" class="row g-3">
+                        <input type="hidden" name="entry_type" value="freezer">
+                        
+                        <div class="col-md-6">
+                            <label for="freezer_id" class="form-label">Freezer ID*</label>
+                            <input type="text" class="form-control" id="freezer_id" name="freezer_id" required>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="freezer_location" class="form-label">Freezer Location*</label>
+                            <input type="text" class="form-control" id="freezer_location" name="freezer_location" required>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="freezer_condition" class="form-label">Condition</label>
+                            <input type="text" class="form-control" id="freezer_condition" name="freezer_condition">
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="freezer_date" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="freezer_date" name="freezer_date">
+                        </div>
+                        
+                        <div class="col-12 text-end">
+                            <button type="submit" class="btn btn-primary">Save Freezer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div id="formResults" class="mt-4"></div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Reset buttons functionality
+            document.getElementById('resetTypeForm').addEventListener('click', function() {
+                document.getElementById('entryTypeForm').reset();
+                hideAllForms();
+                document.getElementById('formResults').innerHTML = '';
+            });
+            
+            document.getElementById('resetOrfForm').addEventListener('click', function() {
+                document.getElementById('orfEntryForm').reset();
+                document.getElementById('formResults').innerHTML = '';
+            });
+            
+            document.getElementById('resetPlasmidForm').addEventListener('click', function() {
+                document.getElementById('plasmidEntryForm').reset();
+                document.getElementById('formResults').innerHTML = '';
+            });
+            
+            document.getElementById('resetOrganismForm').addEventListener('click', function() {
+                document.getElementById('organismEntryForm').reset();
+                document.getElementById('formResults').innerHTML = '';
+            });
+            
+            document.getElementById('resetFreezerForm').addEventListener('click', function() {
+                document.getElementById('freezerEntryForm').reset();
+                document.getElementById('formResults').innerHTML = '';
+            });
+            
+            // Show the appropriate form based on entry type selection
+            const entryTypeSelect = document.getElementById('entryType');
+            const orfForm = document.getElementById('orfForm');
+            const plasmidForm = document.getElementById('plasmidForm');
+            const organismForm = document.getElementById('organismForm');
+            const freezerForm = document.getElementById('freezerForm');
+            
+            entryTypeSelect.addEventListener('change', function() {
+                // Hide all forms
+                hideAllForms();
+                
+                // Show selected form
+                const selectedType = entryTypeSelect.value;
+                if (selectedType === 'orf') {
+                    orfForm.classList.remove('d-none');
+                } else if (selectedType === 'plasmid') {
+                    plasmidForm.classList.remove('d-none');
+                } else if (selectedType === 'organism') {
+                    organismForm.classList.remove('d-none');
+                } else if (selectedType === 'freezer') {
+                    freezerForm.classList.remove('d-none');
+                }
+            });
+            
+            function hideAllForms() {
+                orfForm.classList.add('d-none');
+                plasmidForm.classList.add('d-none');
+                organismForm.classList.add('d-none');
+                freezerForm.classList.add('d-none');
+            }
+            
+            // Load reference data for dropdowns
+            loadReferenceData();
+            
+            // Handle form submissions
+            const orfEntryForm = document.getElementById('orfEntryForm');
+            const plasmidEntryForm = document.getElementById('plasmidEntryForm');
+            const organismEntryForm = document.getElementById('organismEntryForm');
+            const freezerEntryForm = document.getElementById('freezerEntryForm');
+            
+            orfEntryForm.addEventListener('submit', handleFormSubmit);
+            plasmidEntryForm.addEventListener('submit', handleFormSubmit);
+            organismEntryForm.addEventListener('submit', handleFormSubmit);
+            freezerEntryForm.addEventListener('submit', handleFormSubmit);
+            
+            function handleFormSubmit(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(e.target);
+                
+                // Show loading message
+                const resultsDiv = document.getElementById('formResults');
+                resultsDiv.innerHTML = '<div class="alert alert-info">Processing, please wait...</div>';
+                
+                fetch('/add_form', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        resultsDiv.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                        // Reset form
+                        e.target.reset();
+                        // Reload reference data
+                        loadReferenceData();
+                    } else {
+                        resultsDiv.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    resultsDiv.innerHTML = '<div class="alert alert-danger">Error submitting form. Check console for details.</div>';
+                });
+            }
+            
+            function loadReferenceData() {
+                // Load organisms for dropdown
+                fetch('/api/organisms')
+                .then(response => response.json())
+                .then(data => {
+                    const organismSelect = document.getElementById('orf_organism_id');
+                    organismSelect.innerHTML = '<option value="">Select organism</option>';
+                    
+                    data.organisms.forEach(organism => {
+                        const option = document.createElement('option');
+                        option.value = organism.organism_id;
+                        option.textContent = organism.organism_name;
+                        organismSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error loading organisms:', error));
+                
+                // Load plasmids for dropdown
+                fetch('/api/plasmids')
+                .then(response => response.json())
+                .then(data => {
+                    const plasmidSelect = document.getElementById('plasmid_id');
+                    plasmidSelect.innerHTML = '<option value="">Select plasmid</option>';
+                    
+                    data.plasmids.forEach(plasmid => {
+                        const option = document.createElement('option');
+                        option.value = plasmid.plasmid_id;
+                        option.textContent = plasmid.plasmid_name;
+                        plasmidSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error loading plasmids:', error));
+                
+                // Load freezers for dropdown
+                fetch('/api/freezers')
+                .then(response => response.json())
+                .then(data => {
+                    const freezerSelect = document.getElementById('freezer_id');
+                    freezerSelect.innerHTML = '<option value="">Select freezer</option>';
+                    
+                    data.freezers.forEach(freezer => {
+                        const option = document.createElement('option');
+                        option.value = freezer.freezer_id;
+                        option.textContent = freezer.freezer_location;
+                        freezerSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error loading freezers:', error));
+            }
+        });
+    </script>
+</body>
+</html>
