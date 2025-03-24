@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Import Data - Reagent Database</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .header {
+            margin-bottom: 2rem;
+        }
+        .form-container {
+            margin-bottom: 2rem;
+        }
+        .template-container {
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="text-center">Import Data</h1>
+            <p class="text-center text-muted">Import data from CSV or Excel files</p>
+            <div class="text-center mb-4">
+                <a href="/" class="btn btn-secondary">Back to Search</a>
+            </div>
+        </div>
+        
+        <div class="form-container">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="card-title mb-0">Upload File</h4>
+                        <button id="resetForm" class="btn btn-outline-secondary">Reset</button>
+                    </div>
+                    <form id="importForm" class="row g-3" enctype="multipart/form-data">
+                        <div class="col-md-6">
+                            <label for="importType" class="form-label">Import Type</label>
+                            <select class="form-select" id="importType" name="import_type" required>
+                                <option value="" selected disabled>Select type</option>
+                                <option value="orf_sequence">ORF Sequence</option>
+                                <option value="orf_position">ORF Position</option>
+                                <option value="plasmid">Plasmid</option>
+                                <option value="organism">Organism</option>
+                                <option value="freezer">Freezer</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="file" class="form-label">Select File (CSV or XLSX)</label>
+                            <input type="file" class="form-control" id="file" name="file" accept=".csv, .xlsx" required>
+                        </div>
+                        <div class="col-12 mt-3">
+                            <div class="alert alert-info">
+                                <strong>Note:</strong> Files must follow the required format. Download a template first if you're not sure.
+                            </div>
+                        </div>
+                        <div class="col-12 text-end">
+                            <button type="submit" class="btn btn-primary">Upload & Import</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="template-container">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Download Templates</h4>
+                    <p class="card-text">Use these templates as a starting point for your data files:</p>
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">ORF Sequence</h5>
+                                    <p class="card-text small">Template for gene/ORF sequence data</p>
+                                    <button class="btn btn-sm btn-outline-primary download-template" data-type="orf_sequence" data-format="csv">CSV</button>
+                                    <button class="btn btn-sm btn-outline-success download-template" data-type="orf_sequence" data-format="xlsx">Excel</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">ORF Position</h5>
+                                    <p class="card-text small">Template for gene/ORF physical locations</p>
+                                    <button class="btn btn-sm btn-outline-primary download-template" data-type="orf_position" data-format="csv">CSV</button>
+                                    <button class="btn btn-sm btn-outline-success download-template" data-type="orf_position" data-format="xlsx">Excel</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">Plasmid</h5>
+                                    <p class="card-text small">Template for plasmid data</p>
+                                    <button class="btn btn-sm btn-outline-primary download-template" data-type="plasmid" data-format="csv">CSV</button>
+                                    <button class="btn btn-sm btn-outline-success download-template" data-type="plasmid" data-format="xlsx">Excel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-2">
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">Organism</h5>
+                                    <p class="card-text small">Template for organism data</p>
+                                    <button class="btn btn-sm btn-outline-primary download-template" data-type="organism" data-format="csv">CSV</button>
+                                    <button class="btn btn-sm btn-outline-success download-template" data-type="organism" data-format="xlsx">Excel</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">Freezer</h5>
+                                    <p class="card-text small">Template for freezer storage data</p>
+                                    <button class="btn btn-sm btn-outline-primary download-template" data-type="freezer" data-format="csv">CSV</button>
+                                    <button class="btn btn-sm btn-outline-success download-template" data-type="freezer" data-format="xlsx">Excel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="importResults" class="mt-4"></div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Reset button functionality
+            const resetButton = document.getElementById('resetForm');
+            resetButton.addEventListener('click', function() {
+                document.getElementById('importForm').reset();
+                document.getElementById('importResults').innerHTML = '';
+            });
+            
+            // Handle import form submission
+            const importForm = document.getElementById('importForm');
+            importForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(importForm);
+                
+                // Show loading message
+                const resultsDiv = document.getElementById('importResults');
+                resultsDiv.innerHTML = '<div class="alert alert-info">Processing import, please wait...</div>';
+                
+                fetch('/import_file', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        resultsDiv.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                    } else {
+                        resultsDiv.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    resultsDiv.innerHTML = '<div class="alert alert-danger">An error occurred during import. Please check the console for details.</div>';
+                });
+            });
+            
+            // Handle template download buttons
+            const templateButtons = document.querySelectorAll('.download-template');
+            templateButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const type = this.getAttribute('data-type');
+                    const format = this.getAttribute('data-format');
+                    
+                    // Show loading message
+                    const resultsDiv = document.getElementById('importResults');
+                    resultsDiv.innerHTML = '<div class="alert alert-info">Generating template, please wait...</div>';
+                    
+                    fetch(`/template/${type}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Download the file
+                            const path = format === 'csv' ? data.csv_path : data.xlsx_path;
+                            window.location.href = path;
+                            resultsDiv.innerHTML = '<div class="alert alert-success">Template generated successfully. Download should start automatically.</div>';
+                        } else {
+                            resultsDiv.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        resultsDiv.innerHTML = '<div class="alert alert-danger">An error occurred while generating the template. Please check the console for details.</div>';
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

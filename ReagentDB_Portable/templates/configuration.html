@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}Configuration Settings{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Application Configuration</h2>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>Database Location</h4>
+        </div>
+        <div class="card-body">
+            <p>Current database path: <code>{{ current_db_path }}</code></p>
+            
+            <form action="{{ url_for('update_configuration') }}" method="post">
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="use_onedrive" name="use_onedrive" {% if config.use_onedrive %}checked{% endif %}>
+                    <label class="form-check-label" for="use_onedrive">
+                        Store database on OneDrive (for portability and automatic backup)
+                    </label>
+                </div>
+                
+                <div class="mb-3" id="onedrive_path_section" {% if not config.use_onedrive %}style="display: none;"{% endif %}>
+                    <label for="onedrive_path" class="form-label">OneDrive Path</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="onedrive_path" name="onedrive_path" value="{{ config.onedrive_path }}">
+                        <button class="btn btn-outline-secondary" type="button" id="check_path_btn">Check Path</button>
+                    </div>
+                    <div class="form-text" id="path_status"></div>
+                    <div class="form-text">
+                        The database will be stored in a 'ReagentDB' folder within this location.
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Save Configuration</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>About Portable Mode</h4>
+        </div>
+        <div class="card-body">
+            <p>Using the application in portable mode with OneDrive offers several benefits:</p>
+            <ul>
+                <li><strong>Data Portability:</strong> Access your database from any computer where you have the application installed and OneDrive synchronized.</li>
+                <li><strong>Automatic Backup:</strong> OneDrive automatically maintains a backup of your database file.</li>
+                <li><strong>Version History:</strong> OneDrive keeps version history, allowing you to recover previous states of your database if needed.</li>
+            </ul>
+            
+            <div class="alert alert-info">
+                <h5>Important Notes:</h5>
+                <ul>
+                    <li>After changing database location, restart the application to apply changes.</li>
+                    <li>Ensure OneDrive is installed and configured on all computers where you plan to use this application.</li>
+                    <li>Wait for OneDrive to fully sync before accessing the database from another computer.</li>
+                    <li>Do not access the database simultaneously from multiple computers to avoid data corruption.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Toggle OneDrive path section
+    document.getElementById('use_onedrive').addEventListener('change', function() {
+        const pathSection = document.getElementById('onedrive_path_section');
+        pathSection.style.display = this.checked ? 'block' : 'none';
+    });
+    
+    // Check path validity
+    document.getElementById('check_path_btn').addEventListener('click', function() {
+        const path = document.getElementById('onedrive_path').value;
+        const statusElement = document.getElementById('path_status');
+        
+        statusElement.textContent = 'Checking path...';
+        statusElement.className = 'form-text text-secondary';
+        
+        fetch('{{ url_for("check_path") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ path: path }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.valid) {
+                statusElement.textContent = '✓ Path is valid and writable';
+                statusElement.className = 'form-text text-success';
+            } else {
+                let message = 'Path is invalid';
+                if (data.exists && !data.writable) {
+                    message = '⚠ Path exists but is not writable. Check permissions.';
+                } else if (!data.exists) {
+                    message = '⚠ Path does not exist. Please create it first.';
+                }
+                statusElement.textContent = message;
+                statusElement.className = 'form-text text-danger';
+            }
+        })
+        .catch(error => {
+            statusElement.textContent = 'Error checking path: ' + error;
+            statusElement.className = 'form-text text-danger';
+        });
+    });
+</script>
+{% endblock %}

@@ -1,68 +1,43 @@
 # Reagent Database Application
 
-A web-based tool to collect, search, and share experimental results for laboratory reagents, including ORFs (Open Reading Frames), plasmids, organisms, and freezer locations. The application supports portable mode with database storage on OneDrive for easier sharing across multiple computers.
+A comprehensive tool for managing laboratory reagents, ORFs, plasmids, and more.
 
-## Quick Start
+## Directory Structure
 
-```bash
-# Make scripts executable
-bash prepare.sh
+This application is organized into several components:
 
-# Set up database with toy examples
-./setup.sh
+- **Main Application**: The core files for the application
+  - `app/`: Core application code
+  - `templates/`: HTML templates
+  - `config.py`: Configuration settings
+  - `run.py`: Main application launcher
 
-# Run the application
-./run.sh
+- **Portable Version** (`/portable`): Files to create a portable version that stores data on OneDrive
+  - Creates a version that can be used across multiple computers with the database in cloud storage
+
+- **Demo Creator** (`/demo_maker`): Tools to create a self-contained demo with sample data
+  - Perfect for sharing with colleagues who want to see the application in action
+
+## Running the Application
+
+### Normal Mode
+```
+python run.py
 ```
 
-Then open your browser to http://127.0.0.1:5000
+### Creating a Portable Version
+1. Go to the `portable` folder
+2. Run `make_portable.bat` (Windows) or `./make_portable.sh` (macOS/Linux)
+
+### Creating a Demo Version to Share
+1. Go to the `demo_maker` folder
+2. Run `create_demo_package.bat` (Windows) or `./create_demo_package.sh` (macOS/Linux)
+3. Share the resulting `ReagentDB_Demo` folder with colleagues
 
 ## Features
 
-- **Search functionality**: Search by gene/ORF, plasmid, location, or organism
-- **Add new entries**: Add new ORFs, plasmids, organisms, or freezer locations
-- **Export data**: Export database contents to CSV files
-- **Toy examples**: Pre-loaded with realistic laboratory samples
-
-## Included Toy Examples
-
-### Freezers
-- 5 different freezers with various locations and temperatures (-80°C, -196°C, 4°C)
-
-### Organisms
-- 6 different organisms: E. coli (two strains), yeast, human cells, mouse, and fruit fly
-
-### Plasmids
-- 6 different plasmids: expression vectors, mammalian expression, yeast shuttle vectors, etc.
-
-### ORFs (Genes)
-- 8 different genes including:
-  - Fluorescent proteins (GFP, mCherry)
-  - Common marker genes (LacZ, GAPDH)
-  - Human genes (p53)
-  - CRISPR-Cas9
-  - Yeast genes (ACT1, SNF1)
-
-## Example Searches to Try
-
-1. **Search by Gene/ORF**: "GFP", "p53"
-2. **Search by Plasmid**: "pET", "Lenti"
-3. **Search by Location**: "P01", "P05-F"
-4. **Search by Organism**: "coli", "Homo"
-
-## Project Structure
-
-```
-reagent_db_app/
-├── app.py              # Main Flask application
-├── exports/            # Directory for exported CSV files
-├── insert_sample_data.py  # Script with toy examples
-├── prepare.sh          # Makes scripts executable
-├── reagent_db.sqlite   # SQLite database file
-├── run.sh              # Runs the application
-├── setup.sh            # Sets up the application with toy data
-├── setup_db.py         # Initializes the database schema
-└── templates/          # HTML templates
-    ├── add_entry.html  # Form for adding entries
-    └── index.html      # Main search interface
-```
+- Search and filter reagents by various criteria
+- View detailed information about ORFs, plasmids, freezers, and organisms
+- Navigate between related items using clickable links
+- Import and export data
+- Configure storage location (local or cloud-based)

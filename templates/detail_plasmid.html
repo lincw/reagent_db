@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plasmid Details - {{ data.plasmid_name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .header {
+            margin-bottom: 2rem;
+        }
+        .detail-section {
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="text-center">Plasmid Details</h1>
+            <p class="text-center text-muted">
+                <a href="/" class="btn btn-sm btn-outline-secondary">Back to Search</a>
+            </p>
+        </div>
+        
+        <div class="detail-section">
+            <div class="card">
+                <div class="card-header">
+                    <h3>{{ data.plasmid_name }}</h3>
+                    <p class="text-muted mb-0">{{ data.plasmid_description }}</p>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Basic Information</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th>Plasmid ID:</th>
+                                    <td>{{ data.plasmid_id }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Name:</th>
+                                    <td>{{ data.plasmid_name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Type:</th>
+                                    <td>{{ data.plasmid_type or 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Expression Organism:</th>
+                                    <td>{{ data.plasmid_express_organism or 'N/A' }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Additional Information</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th>Selection Marker:</th>
+                                    <td>{{ data.plasmid_selection or 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Source:</th>
+                                    <td>{{ data.plasmid_source or 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Comments:</th>
+                                    <td>{{ data.plasmid_comments or 'N/A' }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="detail-section">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Associated ORFs</h4>
+                </div>
+                <div class="card-body">
+                    {% if data.orfs and data.orfs|length > 0 %}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ORF ID</th>
+                                    <th>Name</th>
+                                    <th>Annotation</th>
+                                    <th>Plate</th>
+                                    <th>Well</th>
+                                    <th>Freezer</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for orf in data.orfs %}
+                                <tr>
+                                    <td><a href="/view/orf/{{ orf.orf_id }}">{{ orf.orf_id }}</a></td>
+                                    <td>{{ orf.orf_name }}</td>
+                                    <td>{{ orf.orf_annotation or 'N/A' }}</td>
+                                    <td>{{ orf.plate or 'N/A' }}</td>
+                                    <td>{{ orf.well or 'N/A' }}</td>
+                                    <td>
+                                        {% if orf.freezer_id %}
+                                            <a href="/view/freezer/{{ orf.freezer_id }}">{{ orf.freezer_location }}</a>
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        No ORFs associated with this plasmid.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4 text-center">
+            <a href="/" class="btn btn-primary">Back to Home</a>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

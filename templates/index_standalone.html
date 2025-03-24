@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reagent Database</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .header {
+            margin-bottom: 2rem;
+        }
+        .search-container {
+            margin-bottom: 2rem;
+        }
+        .results-container {
+            margin-top: 1rem;
+        }
+        .card {
+            margin-bottom: 1rem;
+        }
+        .action-buttons {
+            margin-top: 2rem;
+        }
+        .example-suggestions {
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="text-center">Reagent Database</h1>
+            <p class="text-center text-muted">Search and manage laboratory reagents, ORFs, plasmids, and more</p>
+        </div>
+        
+        <div class="search-container">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="card-title mb-0">Search Database</h4>
+                        <button id="resetSearch" class="btn btn-outline-secondary">Reset</button>
+                    </div>
+                    <form id="searchForm" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="queryType" class="form-label">Search Type</label>
+                            <select class="form-select" id="queryType" name="query_type" required>
+                                <option value="" selected disabled>Select search type</option>
+                                <option value="gene">Gene/ORF</option>
+                                <option value="plasmid">Plasmid</option>
+                                <option value="location">Location (Plate-Well)</option>
+                                <option value="organism">Organism</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="searchTerm" class="form-label">Search Term</label>
+                            <input type="text" class="form-control" id="searchTerm" name="search_term" placeholder="Enter search term..." required>
+                            <div id="exampleSuggestion" class="example-suggestions"></div>
+                        </div>
+                        <div class="col-12 text-end">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="results-container">
+            <div id="resultsArea"></div>
+        </div>
+        
+        <div class="action-buttons text-center">
+            <a href="/add" class="btn btn-success me-2">Add New Entry</a>
+            <a href="/import" class="btn btn-info me-2">Import Data</a>
+            <button id="exportData" class="btn btn-secondary me-2">Export Data</button>
+            <a href="/configuration" class="btn btn-outline-dark">Settings</a>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load example data for search suggestions
+            const exampleData = {
+                gene: [],
+                plasmid: [],
+                location: [],
+                organism: []
+            };
+            
+            // Fetch examples from database
+            fetch('/api/search_examples')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Object.assign(exampleData, data.examples);
+                        updateSearchPlaceholder();
+                    }
+                })
+                .catch(error => console.error('Error fetching examples:', error));
+            
+            // Update search placeholder based on selected query type
+            const queryTypeSelect = document.getElementById('queryType');
+            const searchTermInput = document.getElementById('searchTerm');
+            const exampleSuggestion = document.getElementById('exampleSuggestion');
+            
+            queryTypeSelect.addEventListener('change', updateSearchPlaceholder);
+            
+            function updateSearchPlaceholder() {
+                const queryType = queryTypeSelect.value;
+                if (!queryType) return;
+                
+                const examples = exampleData[queryType];
+                if (examples && examples.length > 0) {
+                    // Randomly select an example
+                    const randomExample = examples[Math.floor(Math.random() * examples.length)];
+                    searchTermInput.placeholder = `e.g., ${randomExample}`;
+                    
+                    // Show example suggestion text
+                    if (examples.length > 1) {
+                        // Show multiple examples
+                        const examplesList = examples.slice(0, 3).join(', ');
+                        exampleSuggestion.textContent = `Examples: ${examplesList}`;
+                    } else {
+                        exampleSuggestion.textContent = `Example: ${randomExample}`;
+                    }
+                } else {
+                    searchTermInput.placeholder = "Enter search term...";
+                    exampleSuggestion.textContent = "";
+                }
+            }
+            
+            // Reset button functionality
+            const resetButton = document.getElementById('resetSearch');
+            resetButton.addEventListener('click', function() {
+                document.getElementById('searchForm').reset();
+                document.getElementById('resultsArea').innerHTML = '';
+                exampleSuggestion.textContent = '';
+            });
+            
+            // Handle search form submission
+            const searchForm = document.getElementById('searchForm');
+            searchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(searchForm);
+                const queryType = formData.get('query_type');
+                const searchTerm = formData.get('search_term');
+                
+                fetch('/search', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    displayResults(data.results, queryType);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+            
+            // Handle export button click
+            const exportBtn = document.getElementById('exportData');
+            exportBtn.addEventListener('click', function() {
+                fetch('/export')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                    } else {
+                        alert('Export failed: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Export failed. Check console for details.');
+                });
+            });
+            
+            // Function to display search results based on query type
+            function displayResults(results, queryType) {
+                const resultsArea = document.getElementById('resultsArea');
+                resultsArea.innerHTML = '';
+                
+                if (results.length === 0) {
+                    resultsArea.innerHTML = '<div class="alert alert-info">No results found.</div>';
+                    return;
+                }
+                
+                // Create a container for the results
+                const resultsContainer = document.createElement('div');
+                
+                // Add a header and clear button
+                const headerDiv = document.createElement('div');
+                headerDiv.className = 'd-flex justify-content-between align-items-center mb-3';
+                
+                const resultsHeader = document.createElement('h4');
+                resultsHeader.textContent = `Search Results (${results.length} found)`;
+                
+                const clearButton = document.createElement('button');
+                clearButton.className = 'btn btn-outline-secondary';
+                clearButton.textContent = 'Clear Results';
+                clearButton.addEventListener('click', function() {
+                    document.getElementById('resultsArea').innerHTML = '';
+                });
+                
+                headerDiv.appendChild(resultsHeader);
+                headerDiv.appendChild(clearButton);
+                resultsContainer.appendChild(headerDiv);
+                
+                // Create a table for the results
+                const table = document.createElement('table');
+                table.className = 'table table-striped table-hover';
+                
+                // Create table header based on query type
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                
+                if (queryType === 'gene') {
+                    ['ORF ID', 'Name', 'Annotation', 'Organism', 'Length (bp)', 'Positions'].forEach(header => {
+                        const th = document.createElement('th');
+                        th.textContent = header;
+                        headerRow.appendChild(th);
+                    });
+                } else if (queryType === 'plasmid') {
+                    ['Plasmid ID', 'Name', 'Type', 'Expression Organism', 'Description', 'ORF Count'].forEach(header => {
+                        const th = document.createElement('th');
+                        th.textContent = header;
+                        headerRow.appendChild(th);
+                    });
+                } else if (queryType === 'location') {
+                    ['Plate', 'Well', 'ORF ID', 'ORF Name', 'Freezer', 'Plasmid'].forEach(header => {
+                        const th = document.createElement('th');
+                        th.textContent = header;
+                        headerRow.appendChild(th);
+                    });
+                } else if (queryType === 'organism') {
+                    ['Organism ID', 'Name', 'Genus', 'Species', 'Strain', 'ORF Count'].forEach(header => {
+                        const th = document.createElement('th');
+                        th.textContent = header;
+                        headerRow.appendChild(th);
+                    });
+                }
+                
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+                
+                // Create table body and populate with results
+                const tbody = document.createElement('tbody');
+                
+                results.forEach(result => {
+                    const row = document.createElement('tr');
+                    
+                    if (queryType === 'gene') {
+                        // ORF ID
+                        let cell = document.createElement('td');
+                        cell.textContent = result.orf_id;
+                        row.appendChild(cell);
+                        
+                        // Name
+                        cell = document.createElement('td');
+                        let nameLink = document.createElement('a');
+                        nameLink.href = `/view/orf/${result.orf_id}`;
+                        nameLink.textContent = result.orf_name;
+                        cell.appendChild(nameLink);
+                        row.appendChild(cell);
+                        
+                        // Annotation
+                        cell = document.createElement('td');
+                        cell.textContent = result.orf_annotation;
+                        row.appendChild(cell);
+                        
+                        // Organism
+                        cell = document.createElement('td');
+                        if (result.organism_name && result.orf_organism_id) {
+                            let organismLink = document.createElement('a');
+                            organismLink.href = `/view/organism/${result.orf_organism_id}`;
+                            organismLink.textContent = result.organism_name;
+                            cell.appendChild(organismLink);
+                        } else {
+                            cell.textContent = 'N/A';
+                        }
+                        row.appendChild(cell);
+                        
+                        // Length
+                        cell = document.createElement('td');
+                        cell.textContent = result.orf_length_bp || 'N/A';
+                        row.appendChild(cell);
+                        
+                        // Positions
+                        cell = document.createElement('td');
+                        if (result.positions && result.positions.length > 0) {
+                            const positions = result.positions.map(pos => `${pos.plate}-${pos.well}`).join(', ');
+                            cell.textContent = positions;
+                        } else {
+                            cell.textContent = 'Not positioned';
+                        }
+                        row.appendChild(cell);
+                        
+                    } else if (queryType === 'plasmid') {
+                        // Plasmid ID
+                        let cell = document.createElement('td');
+                        cell.textContent = result.plasmid_id;
+                        row.appendChild(cell);
+                        
+                        // Name
+                        cell = document.createElement('td');
+                        let plasmidLink = document.createElement('a');
+                        plasmidLink.href = `/view/plasmid/${result.plasmid_id}`;
+                        plasmidLink.textContent = result.plasmid_name;
+                        cell.appendChild(plasmidLink);
+                        row.appendChild(cell);
+                        
+                        // Type
+                        cell = document.createElement('td');
+                        cell.textContent = result.plasmid_type || 'N/A';
+                        row.appendChild(cell);
+                        
+                        // Expression Organism
+                        cell = document.createElement('td');
+                        cell.textContent = result.plasmid_express_organism || 'N/A';
+                        row.appendChild(cell);
+                        
+                        // Description
+                        cell = document.createElement('td');
+                        cell.textContent = result.plasmid_description || 'N/A';
+                        row.appendChild(cell);
+                        
+                        // ORF Count
+                        cell = document.createElement('td');
+                        cell.textContent = result.orf_count || '0';
+                        row.appendChild(cell);
+                        
+                    } else if (queryType === 'location') {
+                        // Plate
+                        let cell = document.createElement('td');
+                        cell.textContent = result.plate;
+                        row.appendChild(cell);
+                        
+                        // Well
+                        cell = document.createElement('td');
+                        cell.textContent = result.well;
+                        row.appendChild(cell);
+                        
+                        // ORF ID
+                        cell = document.createElement('td');
+                        cell.textContent = result.orf_id || 'N/A';
+                        row.appendChild(cell);
+                        
+                        // ORF Name
+                        cell = document.createElement('td');
+                        if (result.orf_id && result.orf_name) {
+                            let orfLink = document.createElement('a');
+                            orfLink.href = `/view/orf/${result.orf_id}`;
+                            orfLink.textContent = result.orf_name;
+                            cell.appendChild(orfLink);
+                        } else {
+                            cell.textContent = 'N/A';
+                        }
+                        row.appendChild(cell);
+                        
+                        // Freezer
+                        cell = document.createElement('td');
+                        if (result.freezer_id && result.freezer_location) {
+                            let freezerLink = document.createElement('a');
+                            freezerLink.href = `/view/freezer/${result.freezer_id}`;
+                            freezerLink.textContent = result.freezer_location;
+                            cell.appendChild(freezerLink);
+                        } else {
+                            cell.textContent = 'N/A';
+                        }
+                        row.appendChild(cell);
+                        
+                        // Plasmid
+                        cell = document.createElement('td');
+                        if (result.plasmid_id && result.plasmid_name) {
+                            let plasmidLink = document.createElement('a');
+                            plasmidLink.href = `/view/plasmid/${result.plasmid_id}`;
+                            plasmidLink.textContent = result.plasmid_name;
+                            cell.appendChild(plasmidLink);
+                        } else {
+                            cell.textContent = 'N/A';
+                        }
+                        row.appendChild(cell);
+                        
+                    } else if (queryType === 'organism') {
+                        // Organism ID
+                        let cell = document.createElement('td');
+                        cell.textContent = result.organism_id;
+                        row.appendChild(cell);
+                        
+                        // Name
+                        cell = document.createElement('td');
+                        let organismLink = document.createElement('a');
+                        organismLink.href = `/view/organism/${result.organism_id}`;
+                        organismLink.textContent = result.organism_name;
+                        cell.appendChild(organismLink);
+                        row.appendChild(cell);
+                        
+                        // Genus
+                        cell = document.createElement('td');
+                        cell.textContent = result.organism_genus || 'N/A';
+                        row.appendChild(cell);
+                        
+                        // Species
+                        cell = document.createElement('td');
+                        cell.textContent = result.organism_species || 'N/A';
+                        row.appendChild(cell);
+                        
+                        // Strain
+                        cell = document.createElement('td');
+                        cell.textContent = result.organism_strain || 'N/A';
+                        row.appendChild(cell);
+                        
+                        // ORF Count
+                        cell = document.createElement('td');
+                        cell.textContent = result.orf_count || '0';
+                        row.appendChild(cell);
+                    }
+                    
+                    tbody.appendChild(row);
+                });
+                
+                table.appendChild(tbody);
+                resultsContainer.appendChild(table);
+                resultsArea.appendChild(resultsContainer);
+                
+                // Add detailed view for some result types (expand on click)
+                if ((queryType === 'plasmid' || queryType === 'organism') && results.length > 0 && results[0].orfs && results[0].orfs.length > 0) {
+                    const detailsDiv = document.createElement('div');
+                    detailsDiv.className = 'mt-4';
+                    
+                    const detailsHeader = document.createElement('h5');
+                    detailsHeader.textContent = queryType === 'plasmid' ? 'Associated ORFs' : 'Associated ORFs';
+                    detailsDiv.appendChild(detailsHeader);
+                    
+                    const detailsTable = document.createElement('table');
+                    detailsTable.className = 'table table-sm';
+                    
+                    const detailsThead = document.createElement('thead');
+                    const detailsHeaderRow = document.createElement('tr');
+                    
+                    if (queryType === 'plasmid') {
+                        ['ORF ID', 'Name', 'Annotation', 'Plate', 'Well'].forEach(header => {
+                            const th = document.createElement('th');
+                            th.textContent = header;
+                            detailsHeaderRow.appendChild(th);
+                        });
+                    } else {
+                        ['ORF ID', 'Name', 'Annotation'].forEach(header => {
+                            const th = document.createElement('th');
+                            th.textContent = header;
+                            detailsHeaderRow.appendChild(th);
+                        });
+                    }
+                    
+                    detailsThead.appendChild(detailsHeaderRow);
+                    detailsTable.appendChild(detailsThead);
+                    
+                    const detailsTbody = document.createElement('tbody');
+                    
+                    results[0].orfs.forEach(orf => {
+                        const detailsRow = document.createElement('tr');
+                        
+                        // ORF ID
+                        let cell = document.createElement('td');
+                        let orfIdLink = document.createElement('a');
+                        orfIdLink.href = `/view/orf/${orf.orf_id}`;
+                        orfIdLink.textContent = orf.orf_id;
+                        cell.appendChild(orfIdLink);
+                        detailsRow.appendChild(cell);
+                        
+                        // Name
+                        cell = document.createElement('td');
+                        let orfNameLink = document.createElement('a');
+                        orfNameLink.href = `/view/orf/${orf.orf_id}`;
+                        orfNameLink.textContent = orf.orf_name;
+                        cell.appendChild(orfNameLink);
+                        detailsRow.appendChild(cell);
+                        
+                        // Annotation
+                        cell = document.createElement('td');
+                        cell.textContent = orf.orf_annotation || 'N/A';
+                        detailsRow.appendChild(cell);
+                        
+                        if (queryType === 'plasmid') {
+                            // Plate
+                            cell = document.createElement('td');
+                            cell.textContent = orf.plate || 'N/A';
+                            detailsRow.appendChild(cell);
+                            
+                            // Well
+                            cell = document.createElement('td');
+                            cell.textContent = orf.well || 'N/A';
+                            detailsRow.appendChild(cell);
+                        }
+                        
+                        detailsTbody.appendChild(detailsRow);
+                    });
+                    
+                    detailsTable.appendChild(detailsTbody);
+                    detailsDiv.appendChild(detailsTable);
+                    resultsArea.appendChild(detailsDiv);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
