@@ -1,7 +1,0 @@
-{
-    "db_path": "reagent_db.sqlite",
-    "use_onedrive": true,
-    "onedrive_path": "",
-    "debug": true,
-    "port": 5000
-}

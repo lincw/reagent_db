@@ -1,8 +1,14 @@
 {% extends 'base.html' %}
 
-{% block title %}Reagent Database - Home{% endblock %}
+{% block title %}Reagent Database{% endblock %}
 
-{% block extra_styles %}
+{% block additional_css %}
+.search-container {
+    margin-bottom: 2rem;
+}
+.results-container {
+    margin-top: 1rem;
+}
 .example-suggestions {
     font-size: 0.85rem;
     margin-top: 0.25rem;
