@@ -14,9 +14,92 @@
     margin-top: 0.25rem;
     color: #6c757d;
 }
+.summary-container {
+    margin-bottom: 2rem;
+}
+.stat-card {
+    text-align: center;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+.stat-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+.last-updated {
+    font-size: 0.8rem;
+    color: #6c757d;
+    text-align: right;
+    margin-top: 0.5rem;
+}
 {% endblock %}
 
 {% block content %}
+<!-- Database Summary Section -->
+<div class="summary-container">
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="card-title mb-0">Database Summary</h4>
+                <button id="refreshStats" class="btn btn-sm btn-outline-primary">Refresh</button>
+            </div>
+            
+            <div class="row" id="statsContainer">
+                <div class="col-md-2">
+                    <div class="stat-card bg-light">
+                        <div class="stat-number text-primary" id="orfSequencesCount">{{ stats.orf_sequences }}</div>
+                        <div class="stat-label">ORF Sequences</div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="stat-card bg-light">
+                        <div class="stat-number text-success" id="orfPositionsCount">{{ stats.orf_positions }}</div>
+                        <div class="stat-label">ORF Positions</div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="stat-card bg-light">
+                        <div class="stat-number text-info" id="uniquePositionedOrfsCount">{{ stats.unique_positioned_orfs }}</div>
+                        <div class="stat-label">Unique Positioned ORFs</div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="stat-card bg-light">
+                        <div class="stat-number text-warning" id="plasmidsCount">{{ stats.plasmids }}</div>
+                        <div class="stat-label">Plasmids</div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="stat-card bg-light">
+                        <div class="stat-number text-danger" id="organismsCount">{{ stats.organisms }}</div>
+                        <div class="stat-label">Organisms</div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="stat-card bg-light">
+                        <div class="stat-number text-dark" id="freezersCount">{{ stats.freezers }}</div>
+                        <div class="stat-label">Freezers</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="last-updated">
+                Database time: <span id="lastUpdated">{{ stats.current_time }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="search-container">
     <div class="card">
         <div class="card-body">
@@ -53,6 +136,7 @@
 </div>
 
 <div class="action-buttons text-center">
+    <a href="/batch_search" class="btn btn-info me-2">Batch Search</a>
     <a href="/add" class="btn btn-success me-2">Add New Entry</a>
     <a href="/import" class="btn btn-info me-2">Import Data</a>
     <button id="exportData" class="btn btn-secondary me-2">Export Data</button>
@@ -63,6 +147,47 @@
 {% block scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Set up auto-refresh of database statistics
+        const refreshStatsButton = document.getElementById('refreshStats');
+        if (refreshStatsButton) {
+            refreshStatsButton.addEventListener('click', function() {
+                refreshDatabaseStats();
+            });
+        }
+        
+        // Global function to refresh the database statistics (accessible from other pages)
+        window.refreshDatabaseStats = function() {
+            fetch('/api/stats')
+                .then(response => response.json())
+                .then(data => {
+                    // Update stat numbers
+                    document.getElementById('orfSequencesCount').textContent = data.orf_sequences;
+                    document.getElementById('orfPositionsCount').textContent = data.orf_positions;
+                    document.getElementById('uniquePositionedOrfsCount').textContent = data.unique_positioned_orfs;
+                    document.getElementById('plasmidsCount').textContent = data.plasmids;
+                    document.getElementById('organismsCount').textContent = data.organisms;
+                    document.getElementById('freezersCount').textContent = data.freezers;
+                    document.getElementById('lastUpdated').textContent = data.current_time;
+                    
+                    // Add a subtle animation effect to highlight updated stats
+                    const statCards = document.querySelectorAll('.stat-card');
+                    statCards.forEach(card => {
+                        card.classList.remove('animate__animated', 'animate__pulse');
+                        void card.offsetWidth; // Trigger reflow to restart animation
+                        card.classList.add('animate__animated', 'animate__pulse');
+                        setTimeout(() => {
+                            card.classList.remove('animate__animated', 'animate__pulse');
+                        }, 1000);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching database stats:', error);
+                });
+        }
+        
+        // Refresh stats periodically (every 60 seconds)
+        setInterval(refreshDatabaseStats, 60000);
+        
         // Load example data for search suggestions
         const exampleData = {
             gene: [],
@@ -201,11 +326,11 @@
             const headerRow = document.createElement('tr');
             
             if (queryType === 'gene') {
-                ['ORF ID', 'Name', 'Annotation', 'Organism', 'Length (bp)', 'Positions'].forEach(header => {
-                    const th = document.createElement('th');
-                    th.textContent = header;
-                    headerRow.appendChild(th);
-                });
+            ['ORF ID', 'Name', 'Annotation', 'Organism', 'Length (bp)', 'External Links', 'Positions'].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            headerRow.appendChild(th);
+            });
             } else if (queryType === 'plasmid') {
                 ['Plasmid ID', 'Name', 'Type', 'Expression Organism', 'Description', 'ORF Count'].forEach(header => {
                     const th = document.createElement('th');
@@ -269,6 +394,67 @@
                     // Length
                     cell = document.createElement('td');
                     cell.textContent = result.orf_length_bp || 'N/A';
+                    row.appendChild(cell);
+                    
+                    // External Links
+                    cell = document.createElement('td');
+                    const linkContainer = document.createElement('div');
+                    linkContainer.className = 'd-flex gap-2';
+                    
+                    // Add Entrez link if ID exists
+                    if (result.orf_entrez_id) {
+                        const entrezId = String(result.orf_entrez_id).split('.')[0]; // Remove decimal part
+                        const entrezLink = document.createElement('a');
+                        entrezLink.href = `https://www.ncbi.nlm.nih.gov/gene/${entrezId}`;
+                        entrezLink.target = '_blank';
+                        entrezLink.title = `Entrez Gene ID: ${entrezId}`;
+                        entrezLink.className = 'btn btn-sm btn-outline-primary';
+                        entrezLink.innerHTML = '<i class="bi bi-database"></i> Entrez';
+                        linkContainer.appendChild(entrezLink);
+                    }
+                    
+                    // Add UniProt link if ID exists
+                    if (result.orf_uniprot_id) {
+                        const uniprotId = String(result.orf_uniprot_id);
+                        const uniprotLink = document.createElement('a');
+                        uniprotLink.href = `https://www.uniprot.org/uniprotkb/${uniprotId}`;
+                        uniprotLink.target = '_blank';
+                        uniprotLink.title = `UniProt ID: ${uniprotId}`;
+                        uniprotLink.className = 'btn btn-sm btn-outline-info';
+                        uniprotLink.innerHTML = '<i class="bi bi-box"></i> UniProt';
+                        linkContainer.appendChild(uniprotLink);
+                    }
+                    
+                    // Add Ensembl link if ID exists
+                    if (result.orf_ensembl_id) {
+                        const ensemblId = String(result.orf_ensembl_id);
+                        const ensemblLink = document.createElement('a');
+                        ensemblLink.href = `https://ensembl.org/id/${ensemblId}`;
+                        ensemblLink.target = '_blank';
+                        ensemblLink.title = `Ensembl ID: ${ensemblId}`;
+                        ensemblLink.className = 'btn btn-sm btn-outline-success';
+                        ensemblLink.innerHTML = '<i class="bi bi-diagram-3"></i> Ensembl';
+                        linkContainer.appendChild(ensemblLink);
+                    }
+                    
+                    // Add custom link if provided
+                    if (result.orf_ref_url) {
+                        const customLink = document.createElement('a');
+                        customLink.href = result.orf_ref_url;
+                        customLink.target = '_blank';
+                        customLink.title = 'Reference URL';
+                        customLink.className = 'btn btn-sm btn-outline-secondary';
+                        customLink.innerHTML = '<i class="bi bi-link-45deg"></i> Reference';
+                        linkContainer.appendChild(customLink);
+                    }
+                    
+                    // If no links, show N/A
+                    if (linkContainer.children.length === 0) {
+                        cell.textContent = 'N/A';
+                    } else {
+                        cell.appendChild(linkContainer);
+                    }
+                    
                     row.appendChild(cell);
                     
                     // Positions

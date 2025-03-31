@@ -18,8 +18,23 @@ current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Create uploads directory
 UPLOAD_FOLDER = os.path.join(current_dir, 'uploads')
 if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+    try:
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+        print(f"Created upload directory at {UPLOAD_FOLDER}")
+    except Exception as e:
+        print(f"Error creating upload directory: {str(e)}")
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+print(f"Upload folder set to: {UPLOAD_FOLDER}")
+
+# Make sure uploads directory is writable
+try:
+    test_file = os.path.join(UPLOAD_FOLDER, 'test_write.txt')
+    with open(test_file, 'w') as f:
+        f.write('test')
+    os.remove(test_file)
+    print("Upload directory is writable")
+except Exception as e:
+    print(f"WARNING: Upload directory may not be writable: {str(e)}")
 
 # Exports directory
 EXPORTS_FOLDER = os.path.join(current_dir, 'exports')

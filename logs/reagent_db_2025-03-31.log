@@ -1,0 +1,83 @@
+2025-03-31 23:43:08,191 - root - INFO - Application starting
+2025-03-31 23:43:08,282 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-31 23:43:08,283 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-03-31 23:43:08,284 - werkzeug - INFO -  * Restarting with stat
+2025-03-31 23:43:09,410 - root - INFO - Application starting
+2025-03-31 23:43:09,441 - werkzeug - WARNING -  * Debugger is active!
+2025-03-31 23:43:09,481 - werkzeug - INFO -  * Debugger PIN: 716-424-407
+2025-03-31 23:43:20,071 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:43:20] "GET / HTTP/1.1" 200 -
+2025-03-31 23:43:20,427 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:43:20] "GET /api/search_examples HTTP/1.1" 200 -
+2025-03-31 23:43:24,763 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:43:24] "GET / HTTP/1.1" 200 -
+2025-03-31 23:43:24,920 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:43:24] "GET /api/search_examples HTTP/1.1" 200 -
+2025-03-31 23:43:33,291 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:43:33] "POST /search HTTP/1.1" 200 -
+2025-03-31 23:43:45,271 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:43:45] "POST /search HTTP/1.1" 200 -
+2025-03-31 23:43:56,546 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:43:56] "POST /search HTTP/1.1" 200 -
+2025-03-31 23:43:58,708 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:43:58] "GET /view/orf/12517 HTTP/1.1" 200 -
+2025-03-31 23:45:19,710 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:45:19] "GET /api/stats HTTP/1.1" 200 -
+2025-03-31 23:46:20,569 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:46:20] "GET /api/stats HTTP/1.1" 200 -
+2025-03-31 23:46:41,214 - werkzeug - INFO -  * Detected change in '/Users/chung-wen.lin/Documents/INET-work/Reagent DB/AI_agent/reagent_db_app/app/routes/search.py', reloading
+2025-03-31 23:46:41,542 - werkzeug - INFO -  * Restarting with stat
+2025-03-31 23:46:42,457 - root - INFO - Application starting
+2025-03-31 23:46:42,493 - werkzeug - WARNING -  * Debugger is active!
+2025-03-31 23:46:42,501 - werkzeug - INFO -  * Debugger PIN: 716-424-407
+2025-03-31 23:47:19,789 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:47:19] "GET /api/stats HTTP/1.1" 200 -
+2025-03-31 23:48:21,809 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:48:21] "GET /api/stats HTTP/1.1" 200 -
+2025-03-31 23:48:26,018 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:48:26] "GET / HTTP/1.1" 200 -
+2025-03-31 23:48:26,301 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:48:26] "GET /api/search_examples HTTP/1.1" 200 -
+2025-03-31 23:48:31,309 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:48:31] "POST /search HTTP/1.1" 200 -
+2025-03-31 23:48:50,821 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:48:50] "GET /view/orf/12517 HTTP/1.1" 200 -
+2025-03-31 23:49:37,855 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:49:37] "GET / HTTP/1.1" 200 -
+2025-03-31 23:49:38,196 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:49:38] "GET /api/search_examples HTTP/1.1" 200 -
+2025-03-31 23:49:49,590 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:49:49] "POST /search HTTP/1.1" 200 -
+2025-03-31 23:50:38,505 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:50:38] "GET /api/stats HTTP/1.1" 200 -
+2025-03-31 23:50:48,432 - werkzeug - INFO -  * Detected change in '/Users/chung-wen.lin/Documents/INET-work/Reagent DB/AI_agent/reagent_db_app/app/utils.py', reloading
+2025-03-31 23:50:48,802 - werkzeug - INFO -  * Restarting with stat
+2025-03-31 23:52:12,376 - root - INFO - Application starting
+2025-03-31 23:52:12,457 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-31 23:52:12,457 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-03-31 23:52:12,458 - werkzeug - INFO -  * Restarting with stat
+2025-03-31 23:52:13,275 - root - INFO - Application starting
+2025-03-31 23:52:13,343 - werkzeug - WARNING -  * Debugger is active!
+2025-03-31 23:52:13,357 - werkzeug - INFO -  * Debugger PIN: 716-424-407
+2025-03-31 23:52:18,476 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:52:18] "GET / HTTP/1.1" 200 -
+2025-03-31 23:52:19,155 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:52:19] "GET /api/search_examples HTTP/1.1" 200 -
+2025-03-31 23:52:24,664 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:52:24] "POST /search HTTP/1.1" 200 -
+2025-03-31 23:52:38,713 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:52:38] "GET /view/orf/12438 HTTP/1.1" 200 -
+2025-03-31 23:52:46,483 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:52:46] "GET / HTTP/1.1" 200 -
+2025-03-31 23:52:46,658 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:52:46] "GET /api/search_examples HTTP/1.1" 200 -
+2025-03-31 23:53:46,803 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:53:46] "GET /api/stats HTTP/1.1" 200 -
+2025-03-31 23:54:03,781 - werkzeug - INFO -  * Detected change in '/Users/chung-wen.lin/Documents/INET-work/Reagent DB/AI_agent/reagent_db_app/app/routes/search.py', reloading
+2025-03-31 23:54:03,998 - werkzeug - INFO -  * Restarting with stat
+2025-03-31 23:59:13,327 - root - INFO - Application starting
+2025-03-31 23:59:13,359 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-31 23:59:13,359 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-03-31 23:59:13,360 - werkzeug - INFO -  * Restarting with stat
+2025-03-31 23:59:13,744 - root - INFO - Application starting
+2025-03-31 23:59:13,765 - werkzeug - WARNING -  * Debugger is active!
+2025-03-31 23:59:13,771 - werkzeug - INFO -  * Debugger PIN: 716-424-407
+2025-03-31 23:59:19,212 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:59:19] "GET / HTTP/1.1" 200 -
+2025-03-31 23:59:19,786 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:59:19] "GET /api/search_examples HTTP/1.1" 200 -
+2025-03-31 23:59:23,922 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:59:23] "GET /batch_search HTTP/1.1" 200 -
+2025-03-31 23:59:36,729 - werkzeug - INFO - 127.0.0.1 - - [31/Mar/2025 23:59:36] "POST /batch_search HTTP/1.1" 200 -
+2025-04-01 00:00:02,096 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:00:02] "GET / HTTP/1.1" 200 -
+2025-04-01 00:00:02,549 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:00:02] "GET /api/search_examples HTTP/1.1" 200 -
+2025-04-01 00:01:02,531 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:01:02] "GET /api/stats HTTP/1.1" 200 -
+2025-04-01 00:02:02,545 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:02:02] "GET /api/stats HTTP/1.1" 200 -
+2025-04-01 00:03:02,741 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:03:02] "GET /api/stats HTTP/1.1" 200 -
+2025-04-01 00:04:02,590 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:04:02] "GET /api/stats HTTP/1.1" 200 -
+2025-04-01 00:04:03,810 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:04:03] "GET /import HTTP/1.1" 200 -
+2025-04-01 00:05:00,277 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:05:00] "GET /import HTTP/1.1" 200 -
+2025-04-01 00:05:17,382 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:05:17] "GET / HTTP/1.1" 200 -
+2025-04-01 00:05:17,647 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:05:17] "GET /api/search_examples HTTP/1.1" 200 -
+2025-04-01 00:05:34,085 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:05:34] "GET /add HTTP/1.1" 200 -
+2025-04-01 00:05:34,185 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:05:34] "GET /api/organisms HTTP/1.1" 200 -
+2025-04-01 00:05:34,188 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:05:34] "GET /api/plasmids HTTP/1.1" 200 -
+2025-04-01 00:05:34,197 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:05:34] "GET /api/freezers HTTP/1.1" 200 -
+2025-04-01 00:05:44,251 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:05:44] "GET / HTTP/1.1" 200 -
+2025-04-01 00:05:44,450 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:05:44] "GET /api/search_examples HTTP/1.1" 200 -
+2025-04-01 00:05:49,072 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:05:49] "GET /configuration HTTP/1.1" 200 -
+2025-04-01 00:05:58,117 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:05:58] "GET / HTTP/1.1" 200 -
+2025-04-01 00:05:58,310 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:05:58] "GET /api/search_examples HTTP/1.1" 200 -

@@ -70,6 +70,37 @@ The application uses SQLite with the following tables:
 
 Important note: The freezer table has a `freezer_condition` column that contains temperature information (e.g., "-20°C"), not a separate `freezer_temp` column as was incorrectly referenced in some code.
 
+## Data Import Behavior
+
+When importing data using CSV/Excel files, the application handles existing records as follows:
+
+### For ORF sequences, plasmids, organisms, and freezers:
+- If a record with the same ID (e.g., `orf_id`, `plasmid_id`) already exists, the existing record will be **updated** with the new values.
+- This is accomplished using SQLite's `INSERT OR REPLACE` command, which acts as an "upsert" operation.
+- All fields in the existing record will be overwritten with values from the import file.
+- Empty fields in the import file will overwrite existing data with empty values.
+
+### For ORF positions:
+- The system uses a standard `INSERT` statement without the `REPLACE` clause.
+- If you attempt to import a position record with the same primary key as an existing record, the database will generate a constraint error.
+- Batch imports with duplicate position records may partially succeed with only the unique records being imported.
+
+### Import Template Fields:
+- Fields marked as "Required" must be included for records to import successfully.
+- Fields marked as "Optional" can be left blank in your import file.
+- Example rows in templates show the expected format for each field.
+
+### Example Workflow:
+1. Download a template for the desired data type (ORF sequence, plasmid, etc.)
+2. Fill in your data, including existing IDs for records you want to update
+3. Import the file using the Import Data page
+4. The system will add new records and update existing ones based on the IDs
+
+### Recommended Practice:
+- Export your current data before performing large imports that might update existing records
+- Use consistent ID formats for your data (e.g., consistent prefixes and numbering schemes)
+- Verify successful imports using the search functionality
+
 ## Additional Tools
 
 - **diagnostic.py**: Database checker to verify structure and data

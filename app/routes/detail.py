@@ -1,6 +1,7 @@
 from flask import render_template, jsonify
 import sqlite3
 from app import app, DB_PATH
+from app.utils import format_database_ids
 
 @app.route('/view/orf/<orf_id>')
 def view_orf(orf_id):
@@ -23,7 +24,7 @@ def view_orf(orf_id):
         conn.close()
         return render_template('error.html', message='ORF not found')
     
-    orf_data = dict(orf_data)
+    orf_data = format_database_ids(dict(orf_data))
     
     # Get position information - ensure string comparison for text IDs
     c.execute('''

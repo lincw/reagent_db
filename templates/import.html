@@ -57,6 +57,13 @@
                         <div class="col-12 mt-3">
                             <div class="alert alert-info">
                                 <strong>Note:</strong> Files must follow the required format. Download a template first if you're not sure.
+                                <hr>
+                                <strong>Import Behavior:</strong>
+                                <ul class="mb-0">
+                                    <li><strong>For ORF sequences, plasmids, organisms, and freezers</strong>: Records with existing IDs will be <strong>updated</strong> with new values.</li>
+                                    <li><strong>For ORF positions</strong>: Only new unique positions can be imported. Duplicates will cause errors.</li>
+                                    <li>Fields marked as "Required" in templates must be included for successful import.</li>
+                                </ul>
                             </div>
                         </div>
                         <div class="col-12 text-end">
@@ -132,11 +139,40 @@
             </div>
         </div>
         
-        <div id="importResults" class="mt-4"></div>
+        <div id="importResults" class="mt-4">
+            <!-- Import results will be displayed here -->
+        </div>
+
+        <!-- Fixed status message that stays at the bottom of the screen -->
+        <div id="fixedStatusMessage" style="position: fixed; bottom: 20px; right: 20px; max-width: 500px; z-index: 1000; display: none;" class="alert alert-info shadow">
+            <span id="statusMessageText"></span>
+            <button type="button" class="btn-close float-end" aria-label="Close" onclick="document.getElementById('fixedStatusMessage').style.display = 'none';"></button>
+        </div>
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Function to show a persistent status message
+        function showStatusMessage(message, type) {
+            const statusDiv = document.getElementById('fixedStatusMessage');
+            const messageText = document.getElementById('statusMessageText');
+            
+            // Remove existing alert classes
+            statusDiv.classList.remove('alert-success', 'alert-danger', 'alert-info', 'alert-warning');
+            
+            // Add the appropriate class
+            statusDiv.classList.add(`alert-${type}`);
+            
+            // Set the message text
+            messageText.textContent = message;
+            
+            // Show the message
+            statusDiv.style.display = 'block';
+            
+            // Optionally auto-hide after a delay (comment out if you want it to stay until dismissed)
+            // setTimeout(() => { statusDiv.style.display = 'none'; }, 8000);
+        }
+        
         document.addEventListener('DOMContentLoaded', function() {
             // Reset button functionality
             const resetButton = document.getElementById('resetForm');
@@ -156,21 +192,43 @@
                 const resultsDiv = document.getElementById('importResults');
                 resultsDiv.innerHTML = '<div class="alert alert-info">Processing import, please wait...</div>';
                 
+                // Also show a fixed status message
+                showStatusMessage('Processing import, please wait...', 'info');
+                
                 fetch('/import_file', {
                     method: 'POST',
                     body: formData
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
                         resultsDiv.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                        showStatusMessage(`Success: ${data.message}`, 'success');
+                        
+                        // Update database statistics if we're on the home page
+                        try {
+                            // Check if we're in an iframe or if parent window has the refreshDatabaseStats function
+                            if (window.parent && typeof window.parent.refreshDatabaseStats === 'function') {
+                                window.parent.refreshDatabaseStats();
+                            }
+                        } catch (e) {
+                            console.warn('Could not refresh parent window stats:', e);
+                        }
                     } else {
+                        console.error('Import failed:', data.message);
                         resultsDiv.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+                        showStatusMessage(`Error: ${data.message}`, 'danger');
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    resultsDiv.innerHTML = '<div class="alert alert-danger">An error occurred during import. Please check the console for details.</div>';
+                    console.error('Error during import:', error);
+                    resultsDiv.innerHTML = `<div class="alert alert-danger">An error occurred during import: ${error.message}. Please check the console for details.</div>`;
+                    showStatusMessage(`Error during import: ${error.message}`, 'danger');
                 });
             });
             
@@ -193,13 +251,16 @@
                             const path = format === 'csv' ? data.csv_path : data.xlsx_path;
                             window.location.href = path;
                             resultsDiv.innerHTML = '<div class="alert alert-success">Template generated successfully. Download should start automatically.</div>';
+                        showStatusMessage('Template generated successfully', 'success');
                         } else {
-                            resultsDiv.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+                        resultsDiv.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+                        showStatusMessage(`Error: ${data.message}`, 'danger');
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
                         resultsDiv.innerHTML = '<div class="alert alert-danger">An error occurred while generating the template. Please check the console for details.</div>';
+                    showStatusMessage('Error generating template', 'danger');
                     });
                 });
             });

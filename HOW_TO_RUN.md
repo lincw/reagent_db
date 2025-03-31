@@ -25,12 +25,30 @@ Then access the application in your browser at:
 http://127.0.0.1:5000
 ```
 
+The application logs will be saved to the `logs` directory instead of being displayed in the terminal. To view logs, use the log viewer utility:
+
+```bash
+# View the latest logs (last 50 lines)
+python view_logs.py
+
+# View more lines
+python view_logs.py -n 100
+
+# Search for specific log entries
+python view_logs.py -g "error"
+
+# List all available log files
+python view_logs.py -l
+```
+
 ## Step 3: Using the Application
 
-1. Search for reagents using the search box (e.g., search for "GFP" as a Gene/ORF)
-2. View details by clicking on the reagent names in the search results
-3. Add new entries using the "Add New Entry" button
-4. Import/Export data as needed
+1. **Search for reagents**: Use the search box on the homepage (e.g., search for "GFP" as a Gene/ORF)
+2. **Batch Search**: Use the Batch Search feature to look up multiple genes at once
+3. **View details**: Click on reagent names in search results to see detailed information
+4. **External databases**: For genes, use the external links to access Entrez, UniProt, and Ensembl databases
+5. **Add new entries**: Use the "Add New Entry" button to add individual records
+6. **Import/Export data**: Use the Import and Export features for bulk data management
 
 ## Troubleshooting
 

@@ -1,0 +1,454 @@
+{% extends 'base.html' %}
+
+{% block title %}Batch Search - Reagent Database{% endblock %}
+
+{% block additional_css %}
+.search-container {
+    margin-bottom: 2rem;
+}
+.results-container {
+    margin-top: 1rem;
+}
+.example-suggestions {
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    color: #6c757d;
+}
+.not-found-list {
+    max-height: 200px;
+    overflow-y: auto;
+    font-size: 0.9rem;
+}
+.search-textarea {
+    font-family: monospace;
+    min-height: 150px;
+}
+.copy-button {
+    cursor: pointer;
+}
+.gene-chip {
+    margin: 0.2rem;
+}
+{% endblock %}
+
+{% block content %}
+<div class="search-container">
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="card-title mb-0">Batch Gene Search</h4>
+                <button id="resetSearch" class="btn btn-outline-secondary">Reset</button>
+            </div>
+            <form id="batchSearchForm" class="row g-3">
+                <div class="col-12">
+                    <label for="searchTerms" class="form-label">Enter Gene Names/IDs (one per line, or comma/tab separated)</label>
+                    <textarea class="form-control search-textarea" id="searchTerms" name="search_terms" 
+                              placeholder="Enter multiple genes, e.g.:&#10;BRCA1&#10;TP53&#10;ATM, PTEN, EGFR&#10;KRAS" required></textarea>
+                    <div class="example-suggestions">
+                        Supports gene names, ORF IDs, Entrez Gene IDs, UniProt IDs, and Ensembl IDs.
+                    </div>
+                </div>
+                <div class="col-12 text-end">
+                    <button id="pasteFromClipboard" type="button" class="btn btn-outline-secondary me-2">
+                        <i class="bi bi-clipboard"></i> Paste from Clipboard
+                    </button>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="results-spinner text-center d-none">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <p>Searching...</p>
+</div>
+
+<div class="results-container">
+    <div id="resultsArea"></div>
+</div>
+
+<div class="mt-4 text-center">
+    <a href="/" class="btn btn-primary">Back to Home</a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchForm = document.getElementById('batchSearchForm');
+        const searchTermsInput = document.getElementById('searchTerms');
+        const resetButton = document.getElementById('resetSearch');
+        const pasteButton = document.getElementById('pasteFromClipboard');
+        const resultsArea = document.getElementById('resultsArea');
+        const spinner = document.querySelector('.results-spinner');
+        
+        // Reset button functionality
+        resetButton.addEventListener('click', function() {
+            searchForm.reset();
+            resultsArea.innerHTML = '';
+        });
+        
+        // Paste from clipboard functionality
+        pasteButton.addEventListener('click', function() {
+            navigator.clipboard.readText()
+            .then(text => {
+                searchTermsInput.value = text;
+            })
+            .catch(err => {
+                console.error('Failed to read clipboard:', err);
+                alert('Could not access clipboard. Please paste manually.');
+            });
+        });
+        
+        // Handle search form submission
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show spinner
+            spinner.classList.remove('d-none');
+            resultsArea.innerHTML = '';
+            
+            const formData = new FormData(searchForm);
+            
+            fetch('/batch_search', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Hide spinner
+                spinner.classList.add('d-none');
+                
+                if (data.success) {
+                    displayResults(data);
+                } else {
+                    resultsArea.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+                }
+            })
+            .catch(error => {
+                // Hide spinner
+                spinner.classList.add('d-none');
+                
+                console.error('Error:', error);
+                resultsArea.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+            });
+        });
+        
+        function displayResults(data) {
+            // Create a summary card
+            const summaryCard = document.createElement('div');
+            summaryCard.className = 'card mb-4';
+            
+            const summaryCardBody = document.createElement('div');
+            summaryCardBody.className = 'card-body';
+            
+            // Create summary header
+            const summaryHeader = document.createElement('h5');
+            summaryHeader.className = 'card-title';
+            summaryHeader.textContent = 'Search Summary';
+            summaryCardBody.appendChild(summaryHeader);
+            
+            // Create summary details
+            const summaryRow = document.createElement('div');
+            summaryRow.className = 'row text-center';
+            
+            // Genes found stats
+            const foundCol = document.createElement('div');
+            foundCol.className = 'col-md-4';
+            foundCol.innerHTML = `
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h2 class="mb-0">${data.count}</h2>
+                        <p class="mb-0">Genes Found</p>
+                    </div>
+                </div>
+            `;
+            summaryRow.appendChild(foundCol);
+            
+            // Genes not found stats
+            const notFoundCol = document.createElement('div');
+            notFoundCol.className = 'col-md-4';
+            notFoundCol.innerHTML = `
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h2 class="mb-0">${data.not_found.length}</h2>
+                        <p class="mb-0">Genes Not Found</p>
+                    </div>
+                </div>
+            `;
+            summaryRow.appendChild(notFoundCol);
+            
+            // Total terms searched
+            const totalCol = document.createElement('div');
+            totalCol.className = 'col-md-4';
+            totalCol.innerHTML = `
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h2 class="mb-0">${data.terms_searched}</h2>
+                        <p class="mb-0">Total Terms</p>
+                    </div>
+                </div>
+            `;
+            summaryRow.appendChild(totalCol);
+            
+            summaryCardBody.appendChild(summaryRow);
+            
+            // If there are not found terms, display them
+            if (data.not_found.length > 0) {
+                const notFoundContainer = document.createElement('div');
+                notFoundContainer.className = 'mt-3';
+                
+                const notFoundHeader = document.createElement('h6');
+                notFoundHeader.textContent = 'Not Found:';
+                notFoundContainer.appendChild(notFoundHeader);
+                
+                const notFoundList = document.createElement('div');
+                notFoundList.className = 'not-found-list border rounded p-2';
+                
+                // Display not found terms as chips
+                const chipContainer = document.createElement('div');
+                chipContainer.className = 'd-flex flex-wrap';
+                
+                data.not_found.forEach(term => {
+                    const chip = document.createElement('span');
+                    chip.className = 'badge bg-secondary gene-chip';
+                    chip.textContent = term;
+                    chipContainer.appendChild(chip);
+                });
+                
+                notFoundList.appendChild(chipContainer);
+                notFoundContainer.appendChild(notFoundList);
+                summaryCardBody.appendChild(notFoundContainer);
+                
+                // Add copy not found button
+                const copyButton = document.createElement('button');
+                copyButton.className = 'btn btn-sm btn-outline-secondary mt-2';
+                copyButton.innerHTML = '<i class="bi bi-clipboard"></i> Copy Not Found';
+                copyButton.addEventListener('click', function() {
+                    navigator.clipboard.writeText(data.not_found.join('\n'))
+                        .then(() => {
+                            // Temporarily change button text
+                            const originalText = copyButton.innerHTML;
+                            copyButton.innerHTML = '<i class="bi bi-check"></i> Copied!';
+                            setTimeout(() => {
+                                copyButton.innerHTML = originalText;
+                            }, 2000);
+                        })
+                        .catch(err => {
+                            console.error('Failed to copy:', err);
+                            alert('Failed to copy to clipboard');
+                        });
+                });
+                notFoundContainer.appendChild(copyButton);
+            }
+            
+            summaryCard.appendChild(summaryCardBody);
+            resultsArea.appendChild(summaryCard);
+            
+            // Create results card
+            if (data.results.length > 0) {
+                const resultsCard = document.createElement('div');
+                resultsCard.className = 'card';
+                
+                const resultsCardBody = document.createElement('div');
+                resultsCardBody.className = 'card-body';
+                
+                // Create results header
+                const resultsHeader = document.createElement('div');
+                resultsHeader.className = 'd-flex justify-content-between align-items-center mb-3';
+                
+                const resultsTitle = document.createElement('h5');
+                resultsTitle.className = 'card-title mb-0';
+                resultsTitle.textContent = 'Search Results';
+                resultsHeader.appendChild(resultsTitle);
+                
+                // Add export button
+                const exportButton = document.createElement('button');
+                exportButton.className = 'btn btn-sm btn-outline-primary';
+                exportButton.innerHTML = '<i class="bi bi-download"></i> Export Results';
+                exportButton.addEventListener('click', function() {
+                    // Generate CSV content
+                    const headers = ['ORF ID', 'Gene Name', 'Organism', 'Annotation', 'Positions', 'Entrez ID', 'UniProt ID', 'Ensembl ID'];
+                    let csvContent = headers.join(',') + '\n';
+                    
+                    data.results.forEach(result => {
+                        const positions = result.positions && result.positions.length > 0 ? 
+                            result.positions.map(pos => `${pos.plate}-${pos.well}`).join(';') : 'None';
+                        
+                        const row = [
+                            `"${result.orf_id || ''}"`,
+                            `"${result.orf_name || ''}"`,
+                            `"${result.organism_name || ''}"`,
+                            `"${result.orf_annotation || ''}"`,
+                            `"${positions}"`,
+                            `"${result.orf_entrez_id || ''}"`,
+                            `"${result.orf_uniprot_id || ''}"`,
+                            `"${result.orf_ensembl_id || ''}"`,
+                        ];
+                        
+                        csvContent += row.join(',') + '\n';
+                    });
+                    
+                    // Create download link
+                    const encodedUri = encodeURI('data:text/csv;charset=utf-8,' + csvContent);
+                    const link = document.createElement('a');
+                    link.setAttribute('href', encodedUri);
+                    link.setAttribute('download', 'batch_search_results.csv');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                });
+                resultsHeader.appendChild(exportButton);
+                
+                resultsCardBody.appendChild(resultsHeader);
+                
+                // Create table to display results
+                const table = document.createElement('table');
+                table.className = 'table table-striped table-hover';
+                
+                // Create table header
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                
+                ['ORF ID', 'Name', 'Organism', 'External Links', 'Positions'].forEach(header => {
+                    const th = document.createElement('th');
+                    th.textContent = header;
+                    headerRow.appendChild(th);
+                });
+                
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+                
+                // Create table body
+                const tbody = document.createElement('tbody');
+                
+                data.results.forEach(result => {
+                    const row = document.createElement('tr');
+                    
+                    // ORF ID
+                    let cell = document.createElement('td');
+                    cell.textContent = result.orf_id;
+                    row.appendChild(cell);
+                    
+                    // Name with link
+                    cell = document.createElement('td');
+                    const nameLink = document.createElement('a');
+                    nameLink.href = `/view/orf/${result.orf_id}`;
+                    nameLink.textContent = result.orf_name;
+                    cell.appendChild(nameLink);
+                    
+                    // Add a tooltip with annotation if available
+                    if (result.orf_annotation) {
+                        const annotation = document.createElement('div');
+                        annotation.className = 'small text-muted text-truncate';
+                        annotation.title = result.orf_annotation;
+                        annotation.style.maxWidth = '200px';
+                        annotation.textContent = result.orf_annotation;
+                        cell.appendChild(annotation);
+                    }
+                    
+                    row.appendChild(cell);
+                    
+                    // Organism
+                    cell = document.createElement('td');
+                    if (result.organism_name && result.orf_organism_id) {
+                        const organismLink = document.createElement('a');
+                        organismLink.href = `/view/organism/${result.orf_organism_id}`;
+                        organismLink.textContent = result.organism_name;
+                        cell.appendChild(organismLink);
+                    } else {
+                        cell.textContent = 'N/A';
+                    }
+                    row.appendChild(cell);
+                    
+                    // External Links
+                    cell = document.createElement('td');
+                    const linkContainer = document.createElement('div');
+                    linkContainer.className = 'd-flex gap-2 flex-wrap';
+                    
+                    // Add Entrez link if ID exists
+                    if (result.orf_entrez_id) {
+                        const entrezId = String(result.orf_entrez_id).split('.')[0]; // Remove decimal part
+                        const entrezLink = document.createElement('a');
+                        entrezLink.href = `https://www.ncbi.nlm.nih.gov/gene/${entrezId}`;
+                        entrezLink.target = '_blank';
+                        entrezLink.title = `Entrez Gene ID: ${entrezId}`;
+                        entrezLink.className = 'btn btn-sm btn-outline-primary';
+                        entrezLink.innerHTML = '<i class="bi bi-database"></i> Entrez';
+                        linkContainer.appendChild(entrezLink);
+                    }
+                    
+                    // Add UniProt link if ID exists
+                    if (result.orf_uniprot_id) {
+                        const uniprotId = String(result.orf_uniprot_id);
+                        const uniprotLink = document.createElement('a');
+                        uniprotLink.href = `https://www.uniprot.org/uniprotkb/${uniprotId}`;
+                        uniprotLink.target = '_blank';
+                        uniprotLink.title = `UniProt ID: ${uniprotId}`;
+                        uniprotLink.className = 'btn btn-sm btn-outline-info';
+                        uniprotLink.innerHTML = '<i class="bi bi-box"></i> UniProt';
+                        linkContainer.appendChild(uniprotLink);
+                    }
+                    
+                    // Add Ensembl link if ID exists
+                    if (result.orf_ensembl_id) {
+                        const ensemblId = String(result.orf_ensembl_id);
+                        const ensemblLink = document.createElement('a');
+                        ensemblLink.href = `https://ensembl.org/id/${ensemblId}`;
+                        ensemblLink.target = '_blank';
+                        ensemblLink.title = `Ensembl ID: ${ensemblId}`;
+                        ensemblLink.className = 'btn btn-sm btn-outline-success';
+                        ensemblLink.innerHTML = '<i class="bi bi-diagram-3"></i> Ensembl';
+                        linkContainer.appendChild(ensemblLink);
+                    }
+                    
+                    // Add custom link if provided
+                    if (result.orf_ref_url) {
+                        const customLink = document.createElement('a');
+                        customLink.href = result.orf_ref_url;
+                        customLink.target = '_blank';
+                        customLink.title = 'Reference URL';
+                        customLink.className = 'btn btn-sm btn-outline-secondary';
+                        customLink.innerHTML = '<i class="bi bi-link-45deg"></i> Ref';
+                        linkContainer.appendChild(customLink);
+                    }
+                    
+                    // If no links, show N/A
+                    if (linkContainer.children.length === 0) {
+                        cell.textContent = 'N/A';
+                    } else {
+                        cell.appendChild(linkContainer);
+                    }
+                    
+                    row.appendChild(cell);
+                    
+                    // Positions
+                    cell = document.createElement('td');
+                    if (result.positions && result.positions.length > 0) {
+                        const positions = result.positions.map(pos => `${pos.plate}-${pos.well}`).join(', ');
+                        cell.textContent = positions;
+                    } else {
+                        cell.textContent = 'Not positioned';
+                    }
+                    row.appendChild(cell);
+                    
+                    tbody.appendChild(row);
+                });
+                
+                table.appendChild(tbody);
+                resultsCardBody.appendChild(table);
+                resultsCard.appendChild(resultsCardBody);
+                resultsArea.appendChild(resultsCard);
+            }
+        }
+    });
+</script>
+{% endblock %}
