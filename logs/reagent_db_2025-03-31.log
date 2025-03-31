@@ -81,3 +81,9 @@
 2025-04-01 00:05:49,072 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:05:49] "GET /configuration HTTP/1.1" 200 -
 2025-04-01 00:05:58,117 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:05:58] "GET / HTTP/1.1" 200 -
 2025-04-01 00:05:58,310 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:05:58] "GET /api/search_examples HTTP/1.1" 200 -
+2025-04-01 00:06:58,534 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:06:58] "GET /api/stats HTTP/1.1" 200 -
+2025-04-01 00:07:58,476 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:07:58] "GET /api/stats HTTP/1.1" 200 -
+2025-04-01 00:08:58,583 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:08:58] "GET /api/stats HTTP/1.1" 200 -
+2025-04-01 00:09:58,755 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:09:58] "GET /api/stats HTTP/1.1" 200 -
+2025-04-01 00:10:58,846 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:10:58] "GET /api/stats HTTP/1.1" 200 -
+2025-04-01 00:11:58,873 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 00:11:58] "GET /api/stats HTTP/1.1" 200 -
