@@ -1,0 +1,3 @@
+plasmid_id,plasmid_name,plasmid_type,plasmid_express_organism,plasmid_description
+P001,pUC19,Cloning vector,E. coli,High-copy number cloning vector
+P002,pET28a,Expression vector,E. coli,T7 expression vector with N-terminal His-tag

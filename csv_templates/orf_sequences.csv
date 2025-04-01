@@ -1,0 +1,3 @@
+orf_id,orf_name,orf_annotation,orf_sequence,orf_with_stop,orf_open,orf_organism_id,orf_length_bp,orf_entrez_id,orf_ensembl_id,orf_uniprot_id,orf_ref_url
+ORF001,lacZ,Beta-galactosidase,ATGACCATGATTACGGATTCACTG,1,0,ORG001,3075,945006,b0344,P00722,https://www.uniprot.org/uniprotkb/P00722/entry
+ORF002,GFP,Green Fluorescent Protein,ATGGTGAGCAAGGGCGAGGAG,1,0,ORG002,720,1254781,NA,P42212,https://www.uniprot.org/uniprotkb/P42212/entry

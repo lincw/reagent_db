@@ -1,0 +1,3 @@
+freezer_id,freezer_location,freezer_condition,freezer_date
+F001,Lab 101 - Freezer A,-80°C,2023-01-15
+F002,Lab 102 - Freezer B,-20°C,2023-01-20

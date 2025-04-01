@@ -12,9 +12,11 @@ def view_orf(orf_id):
     
     # Get ORF details - use string comparison for text IDs
     c.execute('''
-        SELECT os.*, o.organism_name, o.organism_genus, o.organism_species, o.organism_strain
+        SELECT os.*, o.organism_name, o.organism_genus, o.organism_species, o.organism_strain,
+               hgd.hgnc_approved_symbol as hgnc_symbol
         FROM orf_sequence os
         LEFT JOIN organisms o ON os.orf_organism_id = o.organism_id
+        LEFT JOIN human_gene_data hgd ON os.orf_id = hgd.orf_id
         WHERE os.orf_id = ?
     ''', (str(orf_id),))
     
@@ -165,9 +167,11 @@ def api_detail_orf(orf_id):
     
     # Get ORF details - ensure string comparison for text IDs
     c.execute('''
-        SELECT os.*, o.organism_name, o.organism_genus, o.organism_species
+        SELECT os.*, o.organism_name, o.organism_genus, o.organism_species,
+               hgd.hgnc_approved_symbol as hgnc_symbol
         FROM orf_sequence os
         LEFT JOIN organisms o ON os.orf_organism_id = o.organism_id
+        LEFT JOIN human_gene_data hgd ON os.orf_id = hgd.orf_id
         WHERE os.orf_id = ?
     ''', (str(orf_id),))
     

@@ -1,9 +1,36 @@
 import os
 import pandas as pd
 from datetime import datetime
+import sqlite3
+from config import get_db_path
+
+def fetch_hgnc_mapping():
+    """Fetch HGNC symbol mapping from database"""
+    DB_PATH = get_db_path()
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        cursor = conn.cursor()
+        cursor.execute('SELECT orf_id, hgnc_approved_symbol FROM human_gene_data')
+        hgnc_map = {row[0]: row[1] for row in cursor.fetchall() if row[1]}
+        return hgnc_map
+    except sqlite3.OperationalError:
+        # Handle case where table might not exist
+        return {}
+    finally:
+        conn.close()
 
 def format_database_ids(orf_data):
-    """Format database IDs to remove decimal points and ensure proper typing"""
+    """
+    Format database IDs to remove decimal points, map HGNC symbols
+    
+    Priority:
+    1. Use HGNC symbol if exists
+    2. Keep original name if no HGNC symbol
+    """
+    # Fetch HGNC mapping 
+    hgnc_map = fetch_hgnc_mapping()
+
+    # Handle Entrez ID 
     if 'orf_entrez_id' in orf_data and orf_data['orf_entrez_id']:
         try:
             # Try to convert to integer and back to string to remove decimal point
@@ -11,7 +38,16 @@ def format_database_ids(orf_data):
         except (ValueError, TypeError):
             # If conversion fails, keep as is
             pass
-    
+
+    # Map HGNC symbol if exists 
+    if orf_data.get('orf_id') in hgnc_map:
+        # Store original name before replacement
+        orf_data['previous_name'] = orf_data.get('orf_name', '')
+        
+        # Replace name with HGNC symbol
+        hgnc_symbol = hgnc_map[orf_data['orf_id']]
+        orf_data['orf_name'] = hgnc_symbol
+
     return orf_data
 
 # Allowed file extensions

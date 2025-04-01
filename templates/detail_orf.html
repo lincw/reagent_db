@@ -23,7 +23,15 @@
 <div class="detail-section">
     <div class="card">
         <div class="card-header">
-            <h3>{{ data.orf_name }}</h3>
+            {% if data.hgnc_symbol %}
+                <h3 class="d-flex align-items-center">
+                    <span class="me-2">{{ data.orf_name }}</span>
+                    <small class="text-muted">(HGNC)</small>
+                </h3>
+                <p class="text-muted mb-0">HGNC Approved Symbol <a href="/gene-nomenclature" class="text-info">(Learn More)</a></p>
+            {% else %}
+                <h3>{{ data.orf_name }}</h3>
+            {% endif %}
             <p class="text-muted mb-0">{{ data.orf_annotation }}</p>
         </div>
         <div class="card-body">
@@ -39,6 +47,12 @@
                             <th>Name:</th>
                             <td>{{ data.orf_name }}</td>
                         </tr>
+                        {% if data.previous_name and data.previous_name != data.orf_name %}
+                        <tr>
+                            <th>Previous Name:</th>
+                            <td>{{ data.previous_name }}</td>
+                        </tr>
+                        {% endif %}
                         <tr>
                             <th>Organism:</th>
                             <td>

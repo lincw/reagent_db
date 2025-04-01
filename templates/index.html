@@ -55,40 +55,22 @@
             </div>
             
             <div class="row" id="statsContainer">
-                <div class="col-md-2">
+                <div class="col-md-4">
                     <div class="stat-card bg-light">
                         <div class="stat-number text-primary" id="orfSequencesCount">{{ stats.orf_sequences }}</div>
                         <div class="stat-label">ORF Sequences</div>
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <div class="stat-card bg-light">
-                        <div class="stat-number text-success" id="orfPositionsCount">{{ stats.orf_positions }}</div>
-                        <div class="stat-label">ORF Positions</div>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="stat-card bg-light">
-                        <div class="stat-number text-info" id="uniquePositionedOrfsCount">{{ stats.unique_positioned_orfs }}</div>
-                        <div class="stat-label">Unique Positioned ORFs</div>
-                    </div>
-                </div>
-                <div class="col-md-2">
+                <div class="col-md-4">
                     <div class="stat-card bg-light">
                         <div class="stat-number text-warning" id="plasmidsCount">{{ stats.plasmids }}</div>
                         <div class="stat-label">Plasmids</div>
                     </div>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-4">
                     <div class="stat-card bg-light">
                         <div class="stat-number text-danger" id="organismsCount">{{ stats.organisms }}</div>
-                        <div class="stat-label">Organisms</div>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="stat-card bg-light">
-                        <div class="stat-number text-dark" id="freezersCount">{{ stats.freezers }}</div>
-                        <div class="stat-label">Freezers</div>
+                        <div class="stat-label">Unique Organisms</div>
                     </div>
                 </div>
             </div>
@@ -118,10 +100,30 @@
                         <option value="organism">Organism</option>
                     </select>
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-4">
                     <label for="searchTerm" class="form-label">Search Term</label>
                     <input type="text" class="form-control" id="searchTerm" name="search_term" placeholder="Enter search term..." required>
                     <div id="exampleSuggestion" class="example-suggestions"></div>
+                </div>
+                <div class="col-md-2">
+                    <label for="organismSelect" class="form-label">Organism</label>
+                    <select class="form-select" id="organismSelect" name="organism_id">
+                        <option value="">All Organisms</option>
+                        <!-- Will be populated via JavaScript -->
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Match Type</label>
+                    <div class="d-flex">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="match_type" id="partialMatch" value="partial" checked>
+                            <label class="form-check-label" for="partialMatch">Partial</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="match_type" id="exactMatch" value="exact">
+                            <label class="form-check-label" for="exactMatch">Exact</label>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-12 text-end">
                     <button type="submit" class="btn btn-primary">Search</button>
@@ -147,6 +149,27 @@
 {% block scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Load organisms for dropdown
+        fetch('/api/search_organisms')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    populateOrganismDropdown(data.organisms);
+                }
+            })
+            .catch(error => console.error('Error fetching organisms:', error));
+        
+        // Populate organism dropdown
+        function populateOrganismDropdown(organisms) {
+            const organismSelect = document.getElementById('organismSelect');
+            organisms.forEach(organism => {
+                const option = document.createElement('option');
+                option.value = organism.organism_id;
+                option.textContent = organism.organism_name;
+                organismSelect.appendChild(option);
+            });
+        }
+        
         // Set up auto-refresh of database statistics
         const refreshStatsButton = document.getElementById('refreshStats');
         if (refreshStatsButton) {
@@ -162,11 +185,8 @@
                 .then(data => {
                     // Update stat numbers
                     document.getElementById('orfSequencesCount').textContent = data.orf_sequences;
-                    document.getElementById('orfPositionsCount').textContent = data.orf_positions;
-                    document.getElementById('uniquePositionedOrfsCount').textContent = data.unique_positioned_orfs;
                     document.getElementById('plasmidsCount').textContent = data.plasmids;
                     document.getElementById('organismsCount').textContent = data.organisms;
-                    document.getElementById('freezersCount').textContent = data.freezers;
                     document.getElementById('lastUpdated').textContent = data.current_time;
                     
                     // Add a subtle animation effect to highlight updated stats
@@ -499,6 +519,15 @@
                     // ORF Count
                     cell = document.createElement('td');
                     cell.textContent = result.orf_count || '0';
+                    
+                    // Add a note if the ORF count is large
+                    if (result.orf_count > 10) {
+                        const span = document.createElement('span');
+                        span.className = 'ms-2 text-muted small';
+                        span.innerHTML = '<i class="bi bi-info-circle"></i> View organism details for full information';
+                        cell.appendChild(span);
+                    }
+                    
                     row.appendChild(cell);
                     
                 } else if (queryType === 'location') {
@@ -595,8 +624,8 @@
             resultsContainer.appendChild(table);
             resultsArea.appendChild(resultsContainer);
             
-            // Add detailed view for some result types (expand on click)
-            if ((queryType === 'plasmid' || queryType === 'organism') && results.length > 0 && results[0].orfs && results[0].orfs.length > 0) {
+            // Add detailed view for plasmid (organism view is simplified)
+            if (queryType === 'plasmid' && results.length > 0 && results[0].orfs && results[0].orfs.length > 0) {
                 const detailsDiv = document.createElement('div');
                 detailsDiv.className = 'mt-4';
                 

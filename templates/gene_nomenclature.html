@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Gene Nomenclature in Our Database</h1>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <h2>HGNC (HUGO Gene Nomenclature Committee) Symbol</h2>
+            <p>For human genes, we prioritize the HGNC approved symbol. The HGNC is the authoritative body for standardizing human gene names.</p>
+            
+            <h3>What is an HGNC Symbol?</h3>
+            <ul>
+                <li>A unique, standardized name for human genes</li>
+                <li>Approved by international experts</li>
+                <li>Provides a consistent naming convention across scientific research</li>
+            </ul>
+            
+            <h3>Example</h3>
+            <p>If our database contains an ORF (Open Reading Frame) for a human gene, it will be displayed using its HGNC symbol instead of the internal ORF name.</p>
+            <div class="example">
+                <strong>Internal ORF Name:</strong> 1880 (ST5)<br>
+                <strong>HGNC Symbol:</strong> DENND2B
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <h2>Displaying Gene Names</h2>
+            <p>When an HGNC symbol is available, our database will:</p>
+            <ul>
+                <li>Use the HGNC symbol as the primary gene name</li>
+                <li>Display the original ORF or research name as a "Previous Name"</li>
+                <li>Maintain traceability and historical context</li>
+            </ul>
+            
+            <div class="example">
+                <strong>Current Displayed Name:</strong> DENND2B<br>
+                <strong>Previous Name:</strong> ST5 (ORF 1880)
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <h2>ORF (Open Reading Frame) Name</h2>
+            <p>For non-human genes or when no HGNC symbol is available, we use the internal ORF name.</p>
+            
+            <ul>
+                <li>Unique identifier within our database</li>
+                <li>Typically a numeric identifier</li>
+                <li>Used as a fallback when no standard gene name exists</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <h2>Search Functionality</h2>
+            <p>You can search using:</p>
+            <ul>
+                <li>HGNC Symbol (e.g., DENND2B)</li>
+                <li>ORF Name (e.g., 1880)</li>
+                <li>Original ORF Name (e.g., ST5)</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
