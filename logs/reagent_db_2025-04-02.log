@@ -1,0 +1,11 @@
+2025-04-02 21:14:37,875 - root - INFO - Application starting
+2025-04-02 21:14:37,935 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-04-02 21:14:37,935 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-02 21:14:37,936 - werkzeug - INFO -  * Restarting with stat
+2025-04-02 21:14:38,318 - root - INFO - Application starting
+2025-04-02 21:14:38,332 - werkzeug - WARNING -  * Debugger is active!
+2025-04-02 21:14:38,344 - werkzeug - INFO -  * Debugger PIN: 716-424-407
+2025-04-02 21:14:43,604 - werkzeug - INFO - 127.0.0.1 - - [02/Apr/2025 21:14:43] "GET / HTTP/1.1" 200 -
+2025-04-02 21:14:43,716 - werkzeug - INFO - 127.0.0.1 - - [02/Apr/2025 21:14:43] "GET /api/search_organisms HTTP/1.1" 200 -
+2025-04-02 21:14:43,781 - werkzeug - INFO - 127.0.0.1 - - [02/Apr/2025 21:14:43] "GET /api/search_examples HTTP/1.1" 200 -

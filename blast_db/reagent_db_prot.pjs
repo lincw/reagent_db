@@ -1,0 +1,22 @@
+{
+  "version": "1.2",
+  "dbname": "reagent_db_prot",
+  "dbtype": "Protein",
+  "db-version": 5,
+  "description": "/Users/chung-wen.lin/Git_repo/reagent_db/blast_db/reagent_db_sequences.fasta",
+  "number-of-letters": 24708747,
+  "number-of-sequences": 17549,
+  "last-updated": "2025-04-06T22:05:00",
+  "number-of-volumes": 1,
+  "bytes-total": 26621303,
+  "bytes-to-cache": 24866857,
+  "files": [
+    "reagent_db_prot.pdb",
+    "reagent_db_prot.phr",
+    "reagent_db_prot.pin",
+    "reagent_db_prot.pot",
+    "reagent_db_prot.psq",
+    "reagent_db_prot.ptf",
+    "reagent_db_prot.pto"
+  ]
+}

@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  # Flask application
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+      - ./app_data:/app/data
+    environment:
+      - FLASK_APP=run.py
+      - FLASK_ENV=development
+      - BLAST_SERVICE_URL=http://blast:5001
+    depends_on:
+      - blast
+
+  # BLAST service
+  blast:
+    build: ./blast_service
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./blast_service/db:/app/db
+      - ./blast_service/uploads:/app/uploads

@@ -1,0 +1,654 @@
+{% extends 'base.html' %}
+
+{% block title %}BLAST Search - Reagent Database{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Feedback alert area -->
+    <div class="row mb-3" id="feedbackAlert" style="display: none;">
+        <div class="col-12">
+            <div class="alert alert-info" role="alert" id="alertContent">
+                <!-- Alert content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <h1>BLAST Sequence Search</h1>
+            <p class="lead">Search for sequences in the reagent database using BLAST.</p>
+            
+            {% if not blast_installed %}
+            <div class="alert alert-danger" role="alert">
+                <i class="bi bi-exclamation-circle"></i> 
+                BLAST+ tools are not installed on the server. Please contact the administrator.
+            </div>
+            {% endif %}
+            
+            {% if not blast_ready and blast_installed %}
+            <div class="alert alert-warning" role="alert">
+                <i class="bi bi-exclamation-triangle"></i> 
+                The BLAST database is not ready. Please prepare it before searching.
+                <button id="updateBlastBtn" class="btn btn-warning btn-sm ms-3">
+                    <i class="bi bi-arrow-repeat"></i> Update BLAST Database
+                </button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Results section, initially hidden -->
+    <div class="row mb-4" id="resultsSection" style="display: none;">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-0 d-inline">BLAST Results</h5>
+                        <span class="badge bg-primary ms-2" id="hitCount">0 hits</span>
+                    </div>
+                    <a href="/gene-nomenclature" class="btn btn-sm btn-outline-info" target="_blank">
+                        <i class="bi bi-info-circle"></i> Gene Nomenclature
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="alert alert-info mb-0 border-0 rounded-0">
+                        <small>
+                            <strong>Note:</strong> For human genes, we use HGNC symbols when available. Original names are shown for reference.
+                            <a href="/gene-nomenclature">Learn more about gene nomenclature</a>.
+                        </small>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped mb-0" id="blastResultsTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Gene Symbol</th>
+                                    <th>Original Name</th>
+                                    <th>Organism</th>
+                                    <th>Score</th>
+                                    <th>E-value</th>
+                                    <th>Identity</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="blastResultsBody">
+                                <!-- Results will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">BLAST Search Parameters</h5>
+                </div>
+                <div class="card-body">
+                    <form id="blastSearchForm">
+                        <div class="mb-3">
+                            <label for="blastProgram" class="form-label">BLAST Program</label>
+                            <select class="form-select" id="blastProgram" name="program">
+                                <option value="blastn" selected>blastn (nucleotide query → nucleotide db)</option>
+                                <option value="tblastn">tblastn (protein query → translated nucleotide db)</option>
+                                <option value="blastx">blastx (translated nucleotide query → protein db)</option>
+                                <option value="tblastx">tblastx (translated nucleotide query → translated nucleotide db)</option>
+                            </select>
+                            <div class="form-text">Select the BLAST program appropriate for your query sequence.</div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="evalue" class="form-label">E-value threshold</label>
+                                <select class="form-select" id="evalue" name="evalue">
+                                    <option value="10">10</option>
+                                    <option value="1">1</option>
+                                    <option value="0.1">0.1</option>
+                                    <option value="0.01">0.01</option>
+                                    <option value="0.001" selected>0.001</option>
+                                    <option value="1e-5">1e-5</option>
+                                    <option value="1e-10">1e-10</option>
+                                </select>
+                                <div class="form-text">Lower values are more stringent.</div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="maxHits" class="form-label">Maximum hits</label>
+                                <select class="form-select" id="maxHits" name="max_hits">
+                                    <option value="10">10</option>
+                                    <option value="25">25</option>
+                                    <option value="50" selected>50</option>
+                                    <option value="100">100</option>
+                                    <option value="250">250</option>
+                                    <option value="500">500</option>
+                                </select>
+                                <div class="form-text">Maximum number of sequences to return.</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="querySequence" class="form-label">Query Sequence</label>
+                            <textarea class="form-control monospace" id="querySequence" name="sequence" rows="10" placeholder="Paste your DNA or protein sequence here..."></textarea>
+                            <div class="form-text">
+                                Enter a sequence in FASTA format or plain text. For nucleotide sequences, use A, T, G, C. For protein sequences, use standard amino acid single-letter codes.
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary px-5" id="runBlastBtn" {% if not blast_installed or not blast_ready %}disabled{% endif %}>
+                                <i class="bi bi-search"></i> Run BLAST
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Alignment detail modal -->
+    <div class="modal fade" id="alignmentModal" tabindex="-1" aria-labelledby="alignmentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alignmentModalLabel">Sequence Alignment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="align-details">
+                        <dl class="row">
+                            <dt class="col-sm-4">Query Range:</dt>
+                            <dd class="col-sm-8" id="queryRange"></dd>
+                            
+                            <dt class="col-sm-4">Subject Range:</dt>
+                            <dd class="col-sm-8" id="subjectRange"></dd>
+                            
+                            <dt class="col-sm-4">Alignment Length:</dt>
+                            <dd class="col-sm-8" id="alignLength"></dd>
+                            
+                            <dt class="col-sm-4">Identities:</dt>
+                            <dd class="col-sm-8" id="identities"></dd>
+                            
+                            <dt class="col-sm-4">Gaps:</dt>
+                            <dd class="col-sm-8" id="gaps"></dd>
+                            
+                            <dt class="col-sm-4">Score:</dt>
+                            <dd class="col-sm-8" id="score"></dd>
+                            
+                            <dt class="col-sm-4">E-value:</dt>
+                            <dd class="col-sm-8" id="evalue"></dd>
+                        </dl>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h6>Alignment:</h6>
+                        <pre id="alignmentText" class="monospace"></pre>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sequence detail modal -->
+    <div class="modal fade" id="sequenceDetailModal" tabindex="-1" aria-labelledby="sequenceDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sequenceDetailModalLabel">Sequence Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="seqDetailContent">
+                        <!-- Sequence details will be inserted here -->
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h6>Full Sequence:</h6>
+                        <pre id="fullSequenceText" class="monospace"></pre>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a id="viewEntityLink" href="#" class="btn btn-primary">View Full Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading spinner -->
+    <div id="loadingOverlay" style="display: none;">
+        <div class="spinner-container">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="text-center mt-2">Running BLAST search...</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Helper elements
+    const feedbackAlert = document.getElementById('feedbackAlert');
+    const alertContent = document.getElementById('alertContent');
+    const blastSearchForm = document.getElementById('blastSearchForm');
+    const updateBlastBtn = document.getElementById('updateBlastBtn');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const resultsSection = document.getElementById('resultsSection');
+    const hitCount = document.getElementById('hitCount');
+    const blastResultsBody = document.getElementById('blastResultsBody');
+    
+    // Store results for modal access
+    let blastResults = [];
+    
+    // Show feedback message
+    function showFeedback(message, type = 'info') {
+        alertContent.innerHTML = message;
+        alertContent.className = 'alert alert-' + type;
+        feedbackAlert.style.display = 'block';
+        
+        // Scroll to the top to see the feedback message
+        window.scrollTo(0, 0);
+    }
+    
+    // Clear feedback message
+    function clearFeedback() {
+        feedbackAlert.style.display = 'none';
+    }
+    
+    // Show loading overlay
+    function showLoading() {
+        loadingOverlay.style.display = 'flex';
+    }
+    
+    // Hide loading overlay
+    function hideLoading() {
+        loadingOverlay.style.display = 'none';
+    }
+    
+    // Format E-values in scientific notation
+    function formatEvalue(evalue) {
+        if (evalue < 0.0001) {
+            return evalue.toExponential(2);
+        }
+        return evalue.toFixed(4);
+    }
+    
+    // Format alignment for display
+    function formatAlignment(qseq, midline, hseq) {
+        const chunkSize = 60;
+        let alignment = '';
+        let i = 0;
+        
+        while (i < qseq.length) {
+            const queryChunk = qseq.substr(i, chunkSize);
+            const midlineChunk = midline.substr(i, chunkSize);
+            const hitChunk = hseq.substr(i, chunkSize);
+            
+            alignment += 'Query  ' + queryChunk + '\n';
+            alignment += '       ' + midlineChunk + '\n';
+            alignment += 'Sbjct  ' + hitChunk + '\n\n';
+            
+            i += chunkSize;
+        }
+        
+        return alignment;
+    }
+    
+    // Display BLAST results
+    function displayBlastResults(results) {
+        // Store results globally for later use
+        blastResults = results;
+        
+        // Clear previous results
+        blastResultsBody.innerHTML = '';
+        
+        // Update hit count
+        hitCount.textContent = results.length + ' hits';
+        
+        // Show results section
+        resultsSection.style.display = 'block';
+        
+        // Add results to table
+        if (results.length === 0) {
+            blastResultsBody.innerHTML = '<tr><td colspan="8" class="text-center">No hits found.</td></tr>';
+            return;
+        }
+        
+        // Add each result as a row in the table
+        results.forEach(function(hit, index) {
+            const row = document.createElement('tr');
+            
+            // ID column
+            const idCell = document.createElement('td');
+            idCell.textContent = hit.orf_id;
+            row.appendChild(idCell);
+            
+            // Gene Symbol column
+            const geneSymbolCell = document.createElement('td');
+            if (hit.hgnc_symbol) {
+                geneSymbolCell.textContent = hit.hgnc_symbol;
+                geneSymbolCell.classList.add('fw-bold');
+            } else {
+                geneSymbolCell.textContent = '-';  // Dash when no HGNC symbol is available
+                geneSymbolCell.classList.add('text-muted');
+            }
+            row.appendChild(geneSymbolCell);
+            
+            // Original Name column
+            const originalNameCell = document.createElement('td');
+            originalNameCell.textContent = hit.orf_name;
+            row.appendChild(originalNameCell);
+            
+            // Organism column
+            const organismCell = document.createElement('td');
+            organismCell.textContent = hit.organism || '';
+            row.appendChild(organismCell);
+            
+            // Score column
+            const scoreCell = document.createElement('td');
+            scoreCell.textContent = Math.round(hit.bit_score);
+            row.appendChild(scoreCell);
+            
+            // E-value column
+            const evalueCell = document.createElement('td');
+            evalueCell.textContent = formatEvalue(hit.evalue);
+            row.appendChild(evalueCell);
+            
+            // Identity column with alignment button
+            const identityCell = document.createElement('td');
+            // Add the identity percentage
+            identityCell.textContent = Math.round(hit.percent_identity) + '% ';
+            
+            // Add alignment button
+            const viewAlignBtn = document.createElement('button');
+            viewAlignBtn.className = 'btn btn-sm btn-outline-secondary ms-2';
+            viewAlignBtn.innerHTML = '<i class="bi bi-eye"></i>';
+            viewAlignBtn.title = 'View Alignment';
+            viewAlignBtn.setAttribute('data-bs-toggle', 'modal');
+            viewAlignBtn.setAttribute('data-bs-target', '#alignmentModal');
+            viewAlignBtn.setAttribute('data-hit-index', index);
+            identityCell.appendChild(viewAlignBtn);
+            
+            row.appendChild(identityCell);
+            
+            // Actions column
+            const actionsCell = document.createElement('td');
+            
+            // View sequence button
+            const viewSeqBtn = document.createElement('button');
+            viewSeqBtn.className = 'btn btn-sm btn-outline-primary me-1';
+            viewSeqBtn.innerHTML = '<i class="bi bi-file-text"></i>';
+            viewSeqBtn.title = 'View Sequence';
+            viewSeqBtn.setAttribute('data-bs-toggle', 'modal');
+            viewSeqBtn.setAttribute('data-bs-target', '#sequenceDetailModal');
+            viewSeqBtn.setAttribute('data-orf-id', hit.orf_id);
+            
+            // View details button
+            const viewDetailsBtn = document.createElement('a');
+            viewDetailsBtn.className = 'btn btn-sm btn-outline-info';
+            viewDetailsBtn.innerHTML = '<i class="bi bi-info-circle"></i>';
+            viewDetailsBtn.title = 'View Entity Details';
+            viewDetailsBtn.href = '/view/orf/' + hit.orf_id;  // Updated URL path
+            
+            actionsCell.appendChild(viewSeqBtn);
+            actionsCell.appendChild(viewDetailsBtn);
+            row.appendChild(actionsCell);
+            
+            // Add row to table
+            blastResultsBody.appendChild(row);
+        });
+        
+        // Scroll to the results
+        resultsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    // Handle BLAST form submission
+    if (blastSearchForm) {
+        blastSearchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Clear any previous feedback
+            clearFeedback();
+            
+            // Get form data
+            const formData = new FormData(blastSearchForm);
+            
+            // Validate query sequence
+            const sequence = formData.get('sequence');
+            if (!sequence.trim()) {
+                showFeedback('Please enter a sequence to search.', 'warning');
+                return;
+            }
+            
+            // Show loading spinner
+            showLoading();
+            
+            // Submit the BLAST search request
+            fetch('/api/blast_search', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Hide loading spinner
+                hideLoading();
+                
+                if (data.success) {
+                    // Display results
+                    displayBlastResults(data.results);
+                    
+                    // Show feedback if no results
+                    if (data.results.length === 0) {
+                        showFeedback('<strong>No matches found.</strong> Try adjusting your search parameters or using a different sequence.', 'info');
+                    } else {
+                        showFeedback('<strong>' + data.results.length + ' matches found.</strong> Results are displayed below.', 'success');
+                    }
+                } else {
+                    // Show error
+                    showFeedback('<strong>BLAST search failed:</strong> ' + data.error, 'danger');
+                    // Hide results section
+                    resultsSection.style.display = 'none';
+                }
+            })
+            .catch(error => {
+                // Hide loading spinner
+                hideLoading();
+                
+                // Show error
+                showFeedback('<strong>An error occurred:</strong> ' + error.message, 'danger');
+                // Hide results section
+                resultsSection.style.display = 'none';
+            });
+        });
+    }
+    
+    // Handle update BLAST database button
+    if (updateBlastBtn) {
+        updateBlastBtn.addEventListener('click', function() {
+            // Clear any previous feedback
+            clearFeedback();
+            
+            // Show loading spinner
+            showLoading();
+            
+            // Send request to update BLAST database
+            fetch('/api/update_blast_db')
+            .then(response => response.json())
+            .then(data => {
+                // Hide loading spinner
+                hideLoading();
+                
+                if (data.success) {
+                    // Show success message
+                    showFeedback('<strong>Success!</strong> BLAST database updated successfully.', 'success');
+                    // Reload the page after a delay
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    // Show error
+                    showFeedback('<strong>Error:</strong> ' + data.message, 'danger');
+                }
+            })
+            .catch(error => {
+                // Hide loading spinner
+                hideLoading();
+                
+                // Show error
+                showFeedback('<strong>Error:</strong> ' + error.message, 'danger');
+            });
+        });
+    }
+    
+    // Handle alignment modal display
+    document.getElementById('alignmentModal').addEventListener('show.bs.modal', function(event) {
+        const button = event.relatedTarget;
+        const hitIndex = button.getAttribute('data-hit-index');
+        const hit = blastResults[hitIndex];
+        
+        // Set modal title
+        const displayName = hit.display_name || hit.orf_name;
+        document.getElementById('alignmentModalLabel').textContent = 'Alignment: ' + displayName + ' (' + hit.orf_id + ')';
+        
+        // Fill in alignment details
+        document.getElementById('queryRange').textContent = hit.query_from + ' - ' + hit.query_to;
+        document.getElementById('subjectRange').textContent = hit.hit_from + ' - ' + hit.hit_to;
+        document.getElementById('alignLength').textContent = hit.align_len;
+        document.getElementById('identities').textContent = hit.identity + '/' + hit.align_len + ' (' + Math.round(hit.percent_identity) + '%)';
+        document.getElementById('gaps').textContent = hit.gaps + '/' + hit.align_len + ' (' + Math.round((hit.gaps / hit.align_len) * 100) + '%)';
+        document.getElementById('score').textContent = Math.round(hit.bit_score);
+        document.getElementById('evalue').textContent = formatEvalue(hit.evalue);
+        
+        // Format and display alignment
+        document.getElementById('alignmentText').textContent = formatAlignment(hit.qseq, hit.midline, hit.hseq);
+    });
+    
+    // Handle sequence detail modal display
+    document.getElementById('sequenceDetailModal').addEventListener('show.bs.modal', function(event) {
+        const button = event.relatedTarget;
+        const orfId = button.getAttribute('data-orf-id');
+        
+        // Show loading message
+        document.getElementById('seqDetailContent').innerHTML = '<p class="text-center">Loading sequence details...</p>';
+        document.getElementById('fullSequenceText').textContent = '';
+        
+        // Set the view entity link
+        document.getElementById('viewEntityLink').href = '/view/orf/' + orfId;  // Updated URL path
+        
+        // Fetch sequence details
+        fetch('/api/blast_sequence/' + orfId)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const seq = data.sequence;
+                
+                // Set modal title
+                let titleText = 'Sequence: ';
+                if (seq.hgnc_symbol) {
+                    titleText += seq.hgnc_symbol + ' (' + seq.orf_id + ')';
+                } else {
+                    titleText += seq.orf_name + ' (' + seq.orf_id + ')';
+                }
+                document.getElementById('sequenceDetailModalLabel').textContent = titleText;
+                
+                // Create a details table
+                let detailsHtml = '<table class="table table-sm">';
+                detailsHtml += '<tr><th>ID:</th><td>' + seq.orf_id + '</td></tr>';
+                
+                // Use HGNC symbol if available, otherwise use ORF name
+                if (seq.hgnc_symbol) {
+                    detailsHtml += '<tr><th>Gene Symbol:</th><td>' + seq.hgnc_symbol + '</td></tr>';
+                    detailsHtml += '<tr><th>Previous Name:</th><td>' + seq.orf_name + '</td></tr>';
+                } else {
+                    detailsHtml += '<tr><th>Name:</th><td>' + seq.orf_name + '</td></tr>';
+                }
+                
+                if (seq.organism_name) {
+                    detailsHtml += '<tr><th>Organism:</th><td>' + seq.organism_name + '</td></tr>';
+                }
+                
+                if (seq.orf_annotation) {
+                    detailsHtml += '<tr><th>Annotation:</th><td>' + seq.orf_annotation + '</td></tr>';
+                }
+                
+                if (seq.orf_length_bp) {
+                    detailsHtml += '<tr><th>Length:</th><td>' + seq.orf_length_bp + ' bp</td></tr>';
+                }
+                
+                // Add database IDs if available
+                if (seq.orf_entrez_id) {
+                    detailsHtml += '<tr><th>Entrez ID:</th><td>' + seq.orf_entrez_id + '</td></tr>';
+                }
+                
+                if (seq.orf_ensembl_id) {
+                    detailsHtml += '<tr><th>Ensembl ID:</th><td>' + seq.orf_ensembl_id + '</td></tr>';
+                }
+                
+                if (seq.orf_uniprot_id) {
+                    detailsHtml += '<tr><th>UniProt ID:</th><td>' + seq.orf_uniprot_id + '</td></tr>';
+                }
+                
+                detailsHtml += '</table>';
+                
+                // Display the details
+                document.getElementById('seqDetailContent').innerHTML = detailsHtml;
+                
+                // Format and display full sequence
+                let formattedSeq = '';
+                for (let i = 0; i < seq.orf_sequence.length; i += 60) {
+                    formattedSeq += seq.orf_sequence.substring(i, i + 60) + '\n';
+                }
+                document.getElementById('fullSequenceText').textContent = formattedSeq;
+            } else {
+                // Show error
+                document.getElementById('seqDetailContent').innerHTML = '<div class="alert alert-danger">' + data.error + '</div>';
+                document.getElementById('fullSequenceText').textContent = '';
+            }
+        })
+        .catch(error => {
+            // Show error
+            document.getElementById('seqDetailContent').innerHTML = '<div class="alert alert-danger">Error loading sequence details: ' + error.message + '</div>';
+            document.getElementById('fullSequenceText').textContent = '';
+        });
+    });
+});
+</script>
+
+<style>
+    /* Monospace font for sequence display */
+    .monospace {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 13px;
+        white-space: pre;
+    }
+    
+    /* Loading overlay */
+    #loadingOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .spinner-container {
+        background-color: white;
+        padding: 20px;
+        border-radius: 5px;
+        text-align: center;
+    }
+</style>
+{% endblock %}
