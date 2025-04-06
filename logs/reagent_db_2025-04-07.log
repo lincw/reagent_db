@@ -1,0 +1,90 @@
+2025-04-07 00:01:19,842 - root - INFO - Application starting
+2025-04-07 00:01:19,875 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-04-07 00:01:19,875 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-07 00:01:19,876 - werkzeug - INFO -  * Restarting with stat
+2025-04-07 00:01:20,243 - root - INFO - Application starting
+2025-04-07 00:01:20,258 - werkzeug - WARNING -  * Debugger is active!
+2025-04-07 00:01:20,265 - werkzeug - INFO -  * Debugger PIN: 886-233-348
+2025-04-07 00:01:23,774 - werkzeug - INFO -  * Detected change in '/Users/chung-wen.lin/Git_repo/reagent_db/models/sequence.py', reloading
+2025-04-07 00:01:23,830 - werkzeug - INFO -  * Restarting with stat
+2025-04-07 00:01:24,225 - root - INFO - Application starting
+2025-04-07 00:01:24,241 - werkzeug - WARNING -  * Debugger is active!
+2025-04-07 00:01:24,247 - werkzeug - INFO -  * Debugger PIN: 886-233-348
+2025-04-07 00:01:30,680 - app.blast_simple - INFO - BLAST+ installed: blastn: 2.16.0+
+2025-04-07 00:01:30,682 - app.blast_simple - INFO - BLAST database found at /Users/chung-wen.lin/Git_repo/reagent_db/blast_db/reagent_db_nucl.nsq
+2025-04-07 00:01:30,712 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:01:30] "GET /blast HTTP/1.1" 200 -
+2025-04-07 00:01:32,805 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:01:32] "GET / HTTP/1.1" 200 -
+2025-04-07 00:01:32,917 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:01:32] "GET /api/search_organisms HTTP/1.1" 200 -
+2025-04-07 00:01:32,976 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:01:32] "GET /api/search_examples HTTP/1.1" 200 -
+2025-04-07 00:01:33,737 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:01:33] "GET /batch_search HTTP/1.1" 200 -
+2025-04-07 00:01:33,842 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:01:33] "GET /api/search_organisms HTTP/1.1" 200 -
+2025-04-07 00:01:35,320 - app.blast_simple - INFO - BLAST+ installed: blastn: 2.16.0+
+2025-04-07 00:01:35,321 - app.blast_simple - INFO - BLAST database found at /Users/chung-wen.lin/Git_repo/reagent_db/blast_db/reagent_db_nucl.nsq
+2025-04-07 00:01:35,323 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:01:35] "GET /blast HTTP/1.1" 200 -
+2025-04-07 00:01:36,101 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:01:36] "GET /gene-nomenclature HTTP/1.1" 200 -
+2025-04-07 00:01:37,154 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:01:37] "GET /add HTTP/1.1" 200 -
+2025-04-07 00:01:37,228 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:01:37] "GET /api/plasmids HTTP/1.1" 200 -
+2025-04-07 00:01:37,232 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:01:37] "GET /api/freezers HTTP/1.1" 200 -
+2025-04-07 00:01:37,338 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:01:37] "GET /api/organisms HTTP/1.1" 200 -
+2025-04-07 00:01:38,091 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:01:38] "GET / HTTP/1.1" 200 -
+2025-04-07 00:01:38,181 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:01:38] "GET /api/search_organisms HTTP/1.1" 200 -
+2025-04-07 00:01:38,219 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:01:38] "GET /api/search_examples HTTP/1.1" 200 -
+2025-04-07 00:01:39,268 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:01:39] "GET /import HTTP/1.1" 200 -
+2025-04-07 00:01:40,402 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:01:40] "GET / HTTP/1.1" 200 -
+2025-04-07 00:01:40,521 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:01:40] "GET /api/search_organisms HTTP/1.1" 200 -
+2025-04-07 00:01:40,547 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:01:40] "GET /api/search_examples HTTP/1.1" 200 -
+2025-04-07 00:01:41,176 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:01:41] "GET /configuration HTTP/1.1" 200 -
+2025-04-07 00:01:42,777 - app.blast_simple - INFO - BLAST+ installed: blastn: 2.16.0+
+2025-04-07 00:01:42,777 - app.blast_simple - INFO - BLAST database found at /Users/chung-wen.lin/Git_repo/reagent_db/blast_db/reagent_db_nucl.nsq
+2025-04-07 00:01:42,778 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:01:42] "GET /blast HTTP/1.1" 200 -
+2025-04-07 00:01:52,499 - app.routes.blast - INFO - BLAST search with program=blastn, evalue=0.001
+2025-04-07 00:01:53,234 - app.blast_simple - INFO - BLAST+ installed: blastn: 2.16.0+
+2025-04-07 00:01:53,234 - app.blast_simple - INFO - BLAST database found at /Users/chung-wen.lin/Git_repo/reagent_db/blast_db/reagent_db_nucl.nsq
+2025-04-07 00:01:53,235 - app.blast_simple - INFO - Running BLAST command: blastn -query /var/folders/7n/x8nw7d396x7d7cchx4bdxfl80000gn/T/tmpujnug68m -db /Users/chung-wen.lin/Git_repo/reagent_db/blast_db/reagent_db_nucl -outfmt 15 -evalue 0.001 -max_target_seqs 50
+2025-04-07 00:01:53,942 - app.blast_simple - INFO - Successfully parsed BLAST results
+2025-04-07 00:01:53,947 - app.routes.blast - INFO - BLAST search found 1 hits
+2025-04-07 00:01:53,949 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:01:53] "POST /api/blast_search HTTP/1.1" 200 -
+2025-04-07 00:17:10,555 - root - INFO - Application starting
+2025-04-07 00:17:10,585 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-04-07 00:17:10,586 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-07 00:17:10,586 - werkzeug - INFO -  * Restarting with stat
+2025-04-07 00:17:10,980 - root - INFO - Application starting
+2025-04-07 00:17:10,996 - werkzeug - WARNING -  * Debugger is active!
+2025-04-07 00:17:11,002 - werkzeug - INFO -  * Debugger PIN: 886-233-348
+2025-04-07 00:17:15,280 - app.blast_simple - INFO - BLAST+ installed: blastn: 2.16.0+
+2025-04-07 00:17:15,282 - app.blast_simple - INFO - BLAST database found at /Users/chung-wen.lin/Git_repo/reagent_db/blast_db/reagent_db_nucl.nsq
+2025-04-07 00:17:15,325 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:15] "GET /blast HTTP/1.1" 200 -
+2025-04-07 00:17:17,498 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:17] "GET / HTTP/1.1" 200 -
+2025-04-07 00:17:17,601 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:17] "GET /api/search_organisms HTTP/1.1" 200 -
+2025-04-07 00:17:17,680 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:17] "GET /api/search_examples HTTP/1.1" 200 -
+2025-04-07 00:17:18,238 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:18] "GET /batch_search HTTP/1.1" 200 -
+2025-04-07 00:17:18,362 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:18] "GET /api/search_organisms HTTP/1.1" 200 -
+2025-04-07 00:17:19,675 - app.blast_simple - INFO - BLAST+ installed: blastn: 2.16.0+
+2025-04-07 00:17:19,676 - app.blast_simple - INFO - BLAST database found at /Users/chung-wen.lin/Git_repo/reagent_db/blast_db/reagent_db_nucl.nsq
+2025-04-07 00:17:19,677 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:19] "GET /blast HTTP/1.1" 200 -
+2025-04-07 00:17:20,755 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:20] "GET /gene-nomenclature HTTP/1.1" 200 -
+2025-04-07 00:17:21,601 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:21] "GET /add HTTP/1.1" 200 -
+2025-04-07 00:17:21,670 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:21] "GET /api/plasmids HTTP/1.1" 200 -
+2025-04-07 00:17:21,675 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:21] "GET /api/freezers HTTP/1.1" 200 -
+2025-04-07 00:17:21,785 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:21] "GET /api/organisms HTTP/1.1" 200 -
+2025-04-07 00:17:22,621 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:22] "GET / HTTP/1.1" 200 -
+2025-04-07 00:17:22,713 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:22] "GET /api/search_organisms HTTP/1.1" 200 -
+2025-04-07 00:17:22,757 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:22] "GET /api/search_examples HTTP/1.1" 200 -
+2025-04-07 00:17:23,256 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:23] "GET /import HTTP/1.1" 200 -
+2025-04-07 00:17:24,240 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:24] "GET / HTTP/1.1" 200 -
+2025-04-07 00:17:24,351 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:24] "GET /api/search_organisms HTTP/1.1" 200 -
+2025-04-07 00:17:24,376 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:24] "GET /api/search_examples HTTP/1.1" 200 -
+2025-04-07 00:17:24,910 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:24] "GET /configuration HTTP/1.1" 200 -
+2025-04-07 00:17:26,489 - app.blast_simple - INFO - BLAST+ installed: blastn: 2.16.0+
+2025-04-07 00:17:26,491 - app.blast_simple - INFO - BLAST database found at /Users/chung-wen.lin/Git_repo/reagent_db/blast_db/reagent_db_nucl.nsq
+2025-04-07 00:17:26,493 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:26] "GET /blast HTTP/1.1" 200 -
+2025-04-07 00:17:32,479 - app.routes.blast - INFO - BLAST search with program=blastn, evalue=0.001
+2025-04-07 00:17:33,254 - app.blast_simple - INFO - BLAST+ installed: blastn: 2.16.0+
+2025-04-07 00:17:33,255 - app.blast_simple - INFO - BLAST database found at /Users/chung-wen.lin/Git_repo/reagent_db/blast_db/reagent_db_nucl.nsq
+2025-04-07 00:17:33,260 - app.blast_simple - INFO - Running BLAST command: blastn -query /var/folders/7n/x8nw7d396x7d7cchx4bdxfl80000gn/T/tmpi_wyt9ri -db /Users/chung-wen.lin/Git_repo/reagent_db/blast_db/reagent_db_nucl -outfmt 15 -evalue 0.001 -max_target_seqs 50
+2025-04-07 00:17:34,030 - app.blast_simple - INFO - Successfully parsed BLAST results
+2025-04-07 00:17:34,033 - app.routes.blast - INFO - BLAST search found 1 hits
+2025-04-07 00:17:34,033 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:34] "POST /api/blast_search HTTP/1.1" 200 -
+2025-04-07 00:17:36,576 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:36] "GET /view/orf/11576 HTTP/1.1" 200 -

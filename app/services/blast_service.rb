@@ -99,9 +99,9 @@ class BlastService
       name_to_try = sequence.id.to_s
     end
     
-    # Try database lookup if we can access the human_genes table
-    if !empty?(name_to_try) && can_access_db? && table_exists?('human_genes')
-      human_gene = find_human_gene_by_name(name_to_try)
+    # Try database lookup if we can access database
+    if !empty?(name_to_try) && defined?(HumanGene)
+      human_gene = simple_find_human_gene(name_to_try)
       if human_gene && has_attribute?(human_gene, :hgnc_symbol) && !empty?(human_gene.hgnc_symbol)
         return human_gene.hgnc_symbol
       end
@@ -120,42 +120,20 @@ class BlastService
     value.nil? || (value.respond_to?(:empty?) && value.empty?)
   end
   
-  def can_access_db?
-    defined?(HumanGene) && defined?(ActiveRecord::Base)
-  end
-
-  def table_exists?(table_name)
-    return false unless can_access_db?
+  # Simplified human gene lookup without Rails-specific queries
+  def simple_find_human_gene(name)
+    return nil if empty?(name)
     
-    begin
-      ActiveRecord::Base.connection.table_exists?(table_name)
-    rescue
-      false
+    # Try to find by name however your data access layer allows
+    # This is a simplified placeholder - implement based on your data access method
+    if defined?(HumanGene) && HumanGene.respond_to?(:find_by_name)
+      HumanGene.find_by_name(name)
+    elsif defined?(HumanGene) && HumanGene.respond_to?(:where)
+      # Minimal query if ActiveRecord-like interface is available
+      HumanGene.where(original_name: name).first
+    else
+      nil
     end
-  end
-  
-  # Helper method to find a human gene by name
-  def find_human_gene_by_name(name)
-    return nil if name.blank?
-    
-    # Try by aliases field if it exists
-    if HumanGene.column_names.include?('aliases')
-      human_gene = HumanGene.where("aliases LIKE ?", "%#{name.downcase}%").first
-      return human_gene if human_gene&.hgnc_symbol.present?
-    end
-    
-    # Try exact match first
-    human_gene = HumanGene.find_by("lower(original_name) = ?", name.downcase)
-    return human_gene if human_gene.present?
-    
-    # Try as part of a comma-separated list
-    human_gene = HumanGene.where("lower(original_name) LIKE ?", "%#{name.downcase},%").or(
-                HumanGene.where("lower(original_name) LIKE ?", "%, #{name.downcase},%")).or(
-                HumanGene.where("lower(original_name) LIKE ?", "%, #{name.downcase}")).first
-    return human_gene if human_gene.present?
-    
-    # Try substring match
-    HumanGene.where("lower(original_name) LIKE ?", "%#{name.downcase}%").first
   end
   
   def extract_gene_name_from_hit_def(hit_def)

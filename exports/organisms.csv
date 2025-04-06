@@ -1,7 +1,0 @@
-organism_id,organism_name,organism_genus,organism_species,organism_strain
-ORG001,Escherichia coli,Escherichia,coli,BL21(DE3)
-ORG002,Escherichia coli,Escherichia,coli,DH5α
-ORG003,Saccharomyces cerevisiae,Saccharomyces,cerevisiae,BY4741
-ORG004,Homo sapiens,Homo,sapiens,HEK293T
-ORG005,Mus musculus,Mus,musculus,C57BL/6
-ORG006,Drosophila melanogaster,Drosophila,melanogaster,w1118

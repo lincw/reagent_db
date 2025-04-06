@@ -1,3 +1,0 @@
-orf_id,orf_name,orf_sequence,orf_organism_id,orf_annotation,orf_with_stop,orf_open,orf_length_bp,orf_entrez_id,orf_ensembl_id,orf_uniprot_id,orf_ref_url
-TEST001,Test Gene 1,ATGCTAGCTAGC,ORG001,Test annotation 1,1,1,12,12345,ENSG0001,P12345,http://example.com/1
-TEST002,Test Gene 2,CGATCGATCGAT,ORG001,Test annotation 2,0,1,12,67890,ENSG0002,P67890,http://example.com/2

@@ -1,6 +1,0 @@
-freezer_id,freezer_location,freezer_condition,freezer_date
-FRZ001,Cold Room Shelf A,-20°C,2025-02-22
-FRZ002,Lab 220 - Ultra Freezer,-80°C,2025-01-23
-FRZ003,Lab 220 - Cryogenic Storage,-196°C,2025-02-22
-FRZ004,Lab 310 - Refrigerator,4°C,2025-03-24
-FRZ005,Biobank Floor 2 - Section C,-80°C,2025-01-23

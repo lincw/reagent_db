@@ -1,3 +1,0 @@
-orf_id,orf_name,orf_annotation,orf_sequence,orf_with_stop,orf_open,orf_organism_id,orf_length_bp,orf_entrez_id,orf_ensembl_id,orf_uniprot_id,orf_ref_url
-ORF999,Example Gene,Example Annotation,ATGCTAGCTAGCTAGC,1,1,ORG001,16,12345,ENSG00000000000,P12345,https://example.com/gene
-Required,Required,Required,Required,Required,Required,Required,Required,Required,Required,Required,Required
