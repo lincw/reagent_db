@@ -329,19 +329,46 @@
                 exportButton.innerHTML = '<i class="bi bi-download"></i> Export Results';
                 exportButton.addEventListener('click', function() {
                     // Generate CSV content
-                    const headers = ['ORF ID', 'Gene Name', 'Organism', 'Annotation', 'Positions', 'Entrez ID', 'UniProt ID', 'Ensembl ID'];
+                    const headers = ['ORF ID', 'Gene Name', 'Organism', 'Annotation', 'Entry Position', 'AD Position', 'DB Position', 'Entrez ID', 'UniProt ID', 'Ensembl ID'];
                     let csvContent = headers.join(',') + '\n';
                     
                     data.results.forEach(result => {
-                        const positions = result.positions && result.positions.length > 0 ? 
-                            result.positions.map(pos => `${pos.plate}-${pos.well}`).join(';') : 'None';
+                        // Extract position data
+                        let entryPositions = [];
+                        let adPositions = [];
+                        let dbPositions = [];
+                        
+                        // Process regular positions (from orf_position table)
+                        if (result.positions && result.positions.length > 0) {
+                            result.positions.forEach(pos => {
+                                const positionInfo = `${pos.plate || ''}${pos.well ? '-' + pos.well : ''}${pos.freezer_location ? ' (' + pos.freezer_location + ')' : ''}`;
+                                entryPositions.push(positionInfo);
+                            });
+                        }
+                        
+                        // Process yeast positions (from yeast_orf_position table)
+                        if (result.yeast_positions && result.yeast_positions.length > 0) {
+                            result.yeast_positions.forEach(pos => {
+                                const positionInfo = `${pos.plate || ''}${pos.well ? '-' + pos.well : ''}`;
+                                
+                                // Check position type and add to appropriate array
+                                if (pos.position_type === 'DB') {
+                                    dbPositions.push(positionInfo);
+                                } else {
+                                    // Default to AD if not specified or explicitly set to AD
+                                    adPositions.push(positionInfo);
+                                }
+                            });
+                        }
                         
                         const row = [
                             `"${result.orf_id || ''}"`,
                             `"${result.orf_name || ''}"`,
                             `"${result.organism_name || ''}"`,
                             `"${result.orf_annotation || ''}"`,
-                            `"${positions}"`,
+                            `"${entryPositions.join('; ')}"`,
+                            `"${adPositions.join('; ')}"`,
+                            `"${dbPositions.join('; ')}"`,
                             `"${result.orf_entrez_id || ''}"`,
                             `"${result.orf_uniprot_id || ''}"`,
                             `"${result.orf_ensembl_id || ''}"`,
@@ -371,7 +398,7 @@
                 const thead = document.createElement('thead');
                 const headerRow = document.createElement('tr');
                 
-                ['ORF ID', 'Name', 'Organism', 'External Links', 'Positions'].forEach(header => {
+                ['ORF ID', 'Name', 'Organism', 'External Links', 'Source', 'Entry', 'Yeast AD', 'Yeast DB'].forEach(header => {
                     const th = document.createElement('th');
                     th.textContent = header;
                     headerRow.appendChild(th);
@@ -483,13 +510,74 @@
                     
                     row.appendChild(cell);
                     
-                    // Positions
+                    // Sources
+                    cell = document.createElement('td');
+                    if (result.sources && result.sources.length > 0) {
+                        const sourcesList = document.createElement('div');
+                        sourcesList.className = 'd-flex flex-column gap-1';
+                        
+                        // Show up to 3 sources with badges
+                        result.sources.slice(0, 3).forEach(source => {
+                            const sourceBadge = document.createElement('span');
+                            sourceBadge.className = 'badge bg-info';
+                            sourceBadge.textContent = source.source_name;
+                            sourceBadge.title = source.source_details || source.source_name;
+                            sourcesList.appendChild(sourceBadge);
+                        });
+                        
+                        // If there are more sources, add an indicator
+                        if (result.sources.length > 3) {
+                            const moreBadge = document.createElement('span');
+                            moreBadge.className = 'badge bg-secondary';
+                            moreBadge.textContent = `+${result.sources.length - 3} more`;
+                            moreBadge.title = 'View ORF details to see all sources';
+                            sourcesList.appendChild(moreBadge);
+                        }
+                        
+                        cell.appendChild(sourcesList);
+                    } else {
+                        cell.textContent = 'Unknown';
+                    }
+                    row.appendChild(cell);
+                    
+                    // Split positions into multiple columns
+                    // Entry positions
                     cell = document.createElement('td');
                     if (result.positions && result.positions.length > 0) {
-                        const positions = result.positions.map(pos => `${pos.plate}-${pos.well}`).join(', ');
-                        cell.textContent = positions;
+                        cell.innerHTML = result.positions.map(pos => `${pos.plate}-${pos.well}`).join('<br>');
                     } else {
-                        cell.textContent = 'Not positioned';
+                        cell.textContent = 'None';
+                    }
+                    row.appendChild(cell);
+                    
+                    // Yeast AD positions
+                    cell = document.createElement('td');
+                    if (result.yeast_positions && result.yeast_positions.length > 0) {
+                        const adPositions = result.yeast_positions.filter(pos => 
+                            !pos.position_type || pos.position_type === 'AD');
+                        
+                        if (adPositions.length > 0) {
+                            cell.innerHTML = adPositions.map(pos => `${pos.plate}-${pos.well}`).join('<br>');
+                        } else {
+                            cell.textContent = 'None';
+                        }
+                    } else {
+                        cell.textContent = 'None';
+                    }
+                    row.appendChild(cell);
+                    
+                    // Yeast DB positions
+                    cell = document.createElement('td');
+                    if (result.yeast_positions && result.yeast_positions.length > 0) {
+                        const dbPositions = result.yeast_positions.filter(pos => pos.position_type === 'DB');
+                        
+                        if (dbPositions.length > 0) {
+                            cell.innerHTML = dbPositions.map(pos => `${pos.plate}-${pos.well}`).join('<br>');
+                        } else {
+                            cell.textContent = 'None';
+                        }
+                    } else {
+                        cell.textContent = 'None';
                     }
                     row.appendChild(cell);
                     

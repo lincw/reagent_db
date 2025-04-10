@@ -270,6 +270,29 @@ def process_import(df, import_type):
                 ))
                 count += 1
         
+        elif import_type == 'yeast_orf_position':
+            # Validate required columns
+            required_columns = ['orf_id', 'plate', 'well']
+            for col in required_columns:
+                if col not in df.columns:
+                    return {'success': False, 'message': f'Missing required column: {col}'}
+            
+            # Process each row
+            for _, row in df.iterrows():
+                # Skip example rows
+                if row['orf_id'] == 'Required' or row['orf_id'] == 'ORF999':
+                    continue
+                
+                # Insert into database
+                c.execute('''
+                    INSERT INTO yeast_orf_position (
+                        orf_id, plate, well
+                    ) VALUES (?, ?, ?)
+                ''', (
+                    row['orf_id'], row['plate'], row['well']
+                ))
+                count += 1
+        
         elif import_type == 'plasmid':
             # Validate required columns
             required_columns = ['plasmid_id', 'plasmid_name']
@@ -355,6 +378,36 @@ def process_import(df, import_type):
                 ))
                 count += 1
         
+        elif import_type == 'orf_sources':
+            # Validate required columns
+            required_columns = ['orf_id', 'source_name']
+            for col in required_columns:
+                if col not in df.columns:
+                    return {'success': False, 'message': f'Missing required column: {col}'}
+            
+            # Process each row
+            for _, row in df.iterrows():
+                # Skip example rows
+                if row['orf_id'] == 'Required' or row['orf_id'] == 'ORF999':
+                    continue
+                
+                # Set default values for optional columns
+                source_details = row.get('source_details', '')
+                source_url = row.get('source_url', '')
+                submission_date = row.get('submission_date', datetime.now().strftime('%Y-%m-%d'))
+                submitter = row.get('submitter', '')
+                notes = row.get('notes', '')
+                
+                # Insert into database
+                c.execute('''
+                    INSERT INTO orf_sources (
+                        orf_id, source_name, source_details, source_url, submission_date, submitter, notes
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                ''', (
+                    row['orf_id'], row['source_name'], source_details, source_url, submission_date, submitter, notes
+                ))
+                count += 1
+        
         else:
             return {'success': False, 'message': f'Unknown import type: {import_type}'}
         
@@ -429,6 +482,24 @@ def export_data():
             for row in orf_position_data:
                 writer.writerow(row)
         
+        # Export yeast_orf_position data (excluding the id column)
+        c.execute('SELECT orf_id, plate, well FROM yeast_orf_position')
+        yeast_orf_position_data = c.fetchall()
+        with open(os.path.join(export_dir, 'yeast_orf_position.csv'), 'w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['orf_id', 'plate', 'well'])
+            for row in yeast_orf_position_data:
+                writer.writerow(row)
+        
+        # Export orf_sources data
+        c.execute('SELECT orf_id, source_name, source_details, source_url, submission_date, submitter, notes FROM orf_sources')
+        orf_sources_data = c.fetchall()
+        with open(os.path.join(export_dir, 'orf_sources.csv'), 'w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['orf_id', 'source_name', 'source_details', 'source_url', 'submission_date', 'submitter', 'notes'])
+            for row in orf_sources_data:
+                writer.writerow(row)
+        
         # Also export to Excel format
         with pd.ExcelWriter(os.path.join(export_dir, 'reagent_database_export.xlsx')) as writer:
             pd.DataFrame(freezer_data, columns=['freezer_id', 'freezer_location', 'freezer_condition', 'freezer_date']).to_excel(writer, sheet_name='Freezers', index=False)
@@ -444,6 +515,11 @@ def export_data():
             orf_sequence_df.to_excel(writer, sheet_name='ORF Sequences', index=False)
             
             pd.DataFrame(orf_position_data, columns=['orf_id', 'plate', 'well', 'freezer_id', 'plasmid_id', 'orf_create_date']).to_excel(writer, sheet_name='ORF Positions', index=False)
+            
+            pd.DataFrame(yeast_orf_position_data, columns=['orf_id', 'plate', 'well']).to_excel(writer, sheet_name='Yeast ORF Positions', index=False)
+            
+            # Add ORF sources to the Excel export
+            pd.DataFrame(orf_sources_data, columns=['orf_id', 'source_name', 'source_details', 'source_url', 'submission_date', 'submitter', 'notes']).to_excel(writer, sheet_name='ORF Sources', index=False)
         
         success = True
         message = f'Data exported successfully to CSV files and Excel in {export_dir}'

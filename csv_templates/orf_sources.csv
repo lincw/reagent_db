@@ -1,0 +1,3 @@
+orf_id,source_name,source_details,source_url,submission_date,submitter,notes
+ORF001,Commercial Vendor,Purchased from Vendor XYZ,https://vendor-xyz.com/orf001,2023-05-15,Jane Doe,Verified sequence matches published reference
+ORF002,Academic Lab,Gift from Smith Lab,https://smith-lab.edu/plasmids,2023-06-20,John Smith,Original construct published in J. Biol. Chem. 2022

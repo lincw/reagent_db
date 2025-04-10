@@ -49,21 +49,39 @@ def search():
     
     if query_type == 'gene':
         # Search for gene (ORF) by name, id, or HGNC symbol
-        query = f'''
-            SELECT os.*, o.organism_name, o.organism_genus, o.organism_species, o.organism_strain,
-                   COALESCE(hgd.hgnc_approved_symbol, os.orf_name) as display_name, 
-                   hgd.hgnc_approved_symbol, 
-                   os.orf_name as original_name
-            FROM orf_sequence os
-            LEFT JOIN organisms o ON os.orf_organism_id = o.organism_id
-            LEFT JOIN human_gene_data hgd ON os.orf_id = hgd.orf_id
-            WHERE (os.orf_name {operator} ? OR os.orf_id {operator} ? OR COALESCE(hgd.hgnc_approved_symbol, '') {operator} ?)
-        '''
-        params = [search_pattern, search_pattern, search_pattern]
+        # Check if human_gene_data table exists
+        c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='human_gene_data'")
+        human_gene_table_exists = c.fetchone()
+        
+        if human_gene_table_exists:
+            query = f'''
+                SELECT os.*, o.organism_name, o.organism_genus, o.organism_species, o.organism_strain,
+                       COALESCE(hgd.hgnc_approved_symbol, os.orf_name) as display_name, 
+                       hgd.hgnc_approved_symbol, 
+                       os.orf_name as original_name
+                FROM orf_sequence os
+                LEFT JOIN organisms o ON os.orf_organism_id = o.organism_id
+                LEFT JOIN human_gene_data hgd ON os.orf_id = hgd.orf_id
+                WHERE (os.orf_name {operator} ? OR os.orf_id {operator} ? OR COALESCE(hgd.hgnc_approved_symbol, '') {operator} ?)
+            '''
+        else:
+            query = f'''
+                SELECT os.*, o.organism_name, o.organism_genus, o.organism_species, o.organism_strain,
+                       os.orf_name as display_name, 
+                       NULL as hgnc_approved_symbol, 
+                       os.orf_name as original_name
+                FROM orf_sequence os
+                LEFT JOIN organisms o ON os.orf_organism_id = o.organism_id
+                WHERE (os.orf_name {operator} ? OR os.orf_id {operator} ?)
+            '''
+        if human_gene_table_exists:
+            params = [search_pattern, search_pattern, search_pattern]
+        else:
+            params = [search_pattern, search_pattern]
         
         # Add organism filter if provided
         if organism_id:
-            query += f' AND o.organism_name = (SELECT organism_name FROM organisms WHERE organism_id = ?)'
+            query += f' AND o.organism_id = ?'
             params.append(organism_id)
         
         c.execute(query, params)
@@ -83,6 +101,49 @@ def search():
             
             position_data = [dict(row) for row in c.fetchall()]
             result['positions'] = position_data
+            
+            # Check if yeast_orf_position table exists and has position_type
+            c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='yeast_orf_position'")
+            yeast_table_exists = c.fetchone()
+            
+            c.execute("PRAGMA table_info(yeast_orf_position)")
+            columns = [column[1] for column in c.fetchall()]
+            has_position_type = 'position_type' in columns
+            
+            yeast_position_data = []
+            if yeast_table_exists:
+                # Get yeast positions information
+                if has_position_type:
+                    c.execute('''
+                        SELECT id, orf_id, plate, well, position_type 
+                        FROM yeast_orf_position
+                        WHERE orf_id = ?
+                    ''', (orf_id,))
+                else:
+                    c.execute('''
+                        SELECT id, orf_id, plate, well, 'AD' as position_type 
+                        FROM yeast_orf_position
+                        WHERE orf_id = ?
+                    ''', (orf_id,))
+                
+                yeast_position_data = [dict(row) for row in c.fetchall()]
+            result['yeast_positions'] = yeast_position_data
+            
+            # Check if orf_sources table exists
+            c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='orf_sources'")
+            sources_table_exists = c.fetchone()
+            
+            source_data = []
+            if sources_table_exists:
+                # Get source information
+                c.execute('''
+                    SELECT * FROM orf_sources
+                    WHERE orf_id = ?
+                    ORDER BY submission_date DESC
+                ''', (orf_id,))
+                
+                source_data = [dict(row) for row in c.fetchall()]
+            result['sources'] = source_data
     
     # [rest of the function remains the same]
     
@@ -113,41 +174,73 @@ def batch_search():
     
     for term in terms:
         # Define base query based on match type
+        # Check if human_gene_data table exists
+        c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='human_gene_data'")
+        human_gene_table_exists = c.fetchone()
+        
         if match_type == 'exact':
             # For exact matches
-            query = '''
-                SELECT os.*, o.organism_name, o.organism_genus, o.organism_species, o.organism_strain,
-                       COALESCE(hgd.hgnc_approved_symbol, os.orf_name) as display_name, 
-                       hgd.hgnc_approved_symbol, 
-                       os.orf_name as original_name
-                FROM orf_sequence os
-                LEFT JOIN organisms o ON os.orf_organism_id = o.organism_id
-                LEFT JOIN human_gene_data hgd ON os.orf_id = hgd.orf_id
-                WHERE (os.orf_id = ? OR os.orf_name = ? OR COALESCE(hgd.hgnc_approved_symbol, '') = ?)
-            '''
+            if human_gene_table_exists:
+                query = '''
+                    SELECT os.*, o.organism_name, o.organism_genus, o.organism_species, o.organism_strain,
+                           COALESCE(hgd.hgnc_approved_symbol, os.orf_name) as display_name, 
+                           hgd.hgnc_approved_symbol, 
+                           os.orf_name as original_name
+                    FROM orf_sequence os
+                    LEFT JOIN organisms o ON os.orf_organism_id = o.organism_id
+                    LEFT JOIN human_gene_data hgd ON os.orf_id = hgd.orf_id
+                    WHERE (os.orf_id = ? OR os.orf_name = ? OR COALESCE(hgd.hgnc_approved_symbol, '') = ?)
+                '''
+            else:
+                query = '''
+                    SELECT os.*, o.organism_name, o.organism_genus, o.organism_species, o.organism_strain,
+                           os.orf_name as display_name, 
+                           NULL as hgnc_approved_symbol, 
+                           os.orf_name as original_name
+                    FROM orf_sequence os
+                    LEFT JOIN organisms o ON os.orf_organism_id = o.organism_id
+                    WHERE (os.orf_id = ? OR os.orf_name = ?)
+                '''
         else:
             # For partial matches
-            query = '''
-                SELECT os.*, o.organism_name, o.organism_genus, o.organism_species, o.organism_strain,
-                       COALESCE(hgd.hgnc_approved_symbol, os.orf_name) as display_name, 
-                       hgd.hgnc_approved_symbol, 
-                       os.orf_name as original_name
-                FROM orf_sequence os
-                LEFT JOIN organisms o ON os.orf_organism_id = o.organism_id
-                LEFT JOIN human_gene_data hgd ON os.orf_id = hgd.orf_id
-                WHERE (os.orf_id LIKE ? OR os.orf_name LIKE ? OR COALESCE(hgd.hgnc_approved_symbol, '') LIKE ?)
-            '''
+            if human_gene_table_exists:
+                query = '''
+                    SELECT os.*, o.organism_name, o.organism_genus, o.organism_species, o.organism_strain,
+                           COALESCE(hgd.hgnc_approved_symbol, os.orf_name) as display_name, 
+                           hgd.hgnc_approved_symbol, 
+                           os.orf_name as original_name
+                    FROM orf_sequence os
+                    LEFT JOIN organisms o ON os.orf_organism_id = o.organism_id
+                    LEFT JOIN human_gene_data hgd ON os.orf_id = hgd.orf_id
+                    WHERE (os.orf_id LIKE ? OR os.orf_name LIKE ? OR COALESCE(hgd.hgnc_approved_symbol, '') LIKE ?)
+                '''
+            else:
+                query = '''
+                    SELECT os.*, o.organism_name, o.organism_genus, o.organism_species, o.organism_strain,
+                           os.orf_name as display_name, 
+                           NULL as hgnc_approved_symbol, 
+                           os.orf_name as original_name
+                    FROM orf_sequence os
+                    LEFT JOIN organisms o ON os.orf_organism_id = o.organism_id
+                    WHERE (os.orf_id LIKE ? OR os.orf_name LIKE ?)
+                '''
         
-        # Set parameters based on match type
+        # Set parameters based on match type and table existence
         if match_type == 'exact':
-            params = [term, term, term]
+            if human_gene_table_exists:
+                params = [term, term, term]
+            else:
+                params = [term, term]
         else:
             search_pattern = f'%{term}%'
-            params = [search_pattern, search_pattern, search_pattern]
+            if human_gene_table_exists:
+                params = [search_pattern, search_pattern, search_pattern]
+            else:
+                params = [search_pattern, search_pattern]
             
         # Add organism filter if provided
         if organism_id:
-            query += ' AND o.organism_name = (SELECT organism_name FROM organisms WHERE organism_id = ?)'
+            query += ' AND o.organism_id = ?'
             params.append(organism_id)
         
         c.execute(query, params)
@@ -171,6 +264,49 @@ def batch_search():
         
         position_data = [dict(row) for row in c.fetchall()]
         result['positions'] = position_data
+        
+        # Check if yeast_orf_position table exists and has position_type
+        c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='yeast_orf_position'")
+        yeast_table_exists = c.fetchone()
+        
+        c.execute("PRAGMA table_info(yeast_orf_position)")
+        columns = [column[1] for column in c.fetchall()]
+        has_position_type = 'position_type' in columns
+        
+        yeast_position_data = []
+        if yeast_table_exists:
+            # Get yeast positions information
+            if has_position_type:
+                c.execute('''
+                    SELECT id, orf_id, plate, well, position_type 
+                    FROM yeast_orf_position
+                    WHERE orf_id = ?
+                ''', (orf_id,))
+            else:
+                c.execute('''
+                    SELECT id, orf_id, plate, well, 'AD' as position_type 
+                    FROM yeast_orf_position
+                    WHERE orf_id = ?
+                ''', (orf_id,))
+            
+            yeast_position_data = [dict(row) for row in c.fetchall()]
+        result['yeast_positions'] = yeast_position_data
+        
+        # Check if orf_sources table exists
+        c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='orf_sources'")
+        sources_table_exists = c.fetchone()
+        
+        source_data = []
+        if sources_table_exists:
+            # Get source information
+            c.execute('''
+                SELECT * FROM orf_sources
+                WHERE orf_id = ?
+                ORDER BY submission_date DESC
+            ''', (orf_id,))
+            
+            source_data = [dict(row) for row in c.fetchall()]
+        result['sources'] = source_data
     
     # Use a set to track unique ORF IDs to prevent duplicate results
     unique_orf_ids = set()
@@ -216,14 +352,20 @@ def get_search_examples():
     ''')
     gene_examples = [row[0] for row in c.fetchall()]
     
-    # Add HGNC symbols if available
-    c.execute('''
-        SELECT hgnc_approved_symbol 
-        FROM human_gene_data 
-        ORDER BY RANDOM() 
-        LIMIT 2
-    ''')
-    hgnc_examples = [row[0] for row in c.fetchall() if row[0]]
+    # Check if human_gene_data table exists before querying
+    c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='human_gene_data'")
+    human_gene_table_exists = c.fetchone()
+    
+    hgnc_examples = []
+    if human_gene_table_exists:
+        # Add HGNC symbols if available
+        c.execute('''
+            SELECT hgnc_approved_symbol 
+            FROM human_gene_data 
+            ORDER BY RANDOM() 
+            LIMIT 2
+        ''')
+        hgnc_examples = [row[0] for row in c.fetchall() if row[0]]
     
     examples['gene'] = gene_examples + hgnc_examples
     
@@ -242,3 +384,369 @@ def get_search_examples():
     conn.close()
     
     return jsonify({'success': True, 'examples': examples})
+
+@app.route('/api/search', methods=['GET'])
+def api_search():
+    """API endpoint for search functionality"""
+    query_type = request.args.get('type')
+    search_term = request.args.get('query')
+    match_type = request.args.get('match', 'partial')  # Default to partial matching
+    organism_id = request.args.get('organism', '')  # Optional organism filter
+    
+    # Debug logging
+    print(f"API Search: type={query_type}, query={search_term}, match={match_type}, organism={organism_id}")
+    
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    
+    results = []
+    
+    # Prepare search patterns based on match type
+    if match_type == 'exact':
+        # For exact matching, don't use wildcards
+        search_pattern = search_term
+        operator = '='
+    else:
+        # For partial matching, use wildcards
+        search_pattern = f'%{search_term}%'
+        operator = 'LIKE'
+    
+    try:
+        if query_type == 'gene' or query_type == 'orf':
+            # Search for gene (ORF) by name, id, or HGNC symbol
+            # Check if human_gene_data table exists
+            c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='human_gene_data'")
+            human_gene_table_exists = c.fetchone()
+            
+            if human_gene_table_exists:
+                query = f'''
+                    SELECT os.*, o.organism_name, o.organism_genus, o.organism_species, o.organism_strain,
+                           COALESCE(hgd.hgnc_approved_symbol, os.orf_name) as display_name, 
+                           hgd.hgnc_approved_symbol, 
+                           os.orf_name as original_name
+                    FROM orf_sequence os
+                    LEFT JOIN organisms o ON os.orf_organism_id = o.organism_id
+                    LEFT JOIN human_gene_data hgd ON os.orf_id = hgd.orf_id
+                    WHERE (os.orf_name {operator} ? OR os.orf_id {operator} ? OR COALESCE(hgd.hgnc_approved_symbol, '') {operator} ?)
+                '''
+                params = [search_pattern, search_pattern, search_pattern]
+            else:
+                query = f'''
+                    SELECT os.*, o.organism_name, o.organism_genus, o.organism_species, o.organism_strain,
+                           os.orf_name as display_name, 
+                           NULL as hgnc_approved_symbol, 
+                           os.orf_name as original_name
+                    FROM orf_sequence os
+                    LEFT JOIN organisms o ON os.orf_organism_id = o.organism_id
+                    WHERE (os.orf_name {operator} ? OR os.orf_id {operator} ?)
+                '''
+                params = [search_pattern, search_pattern]
+            
+            # Add organism filter if provided
+            if organism_id:
+                query += f' AND o.organism_id = ?'
+                params.append(organism_id)
+            
+            c.execute(query, params)
+            
+            # Only use format_database_ids for gene/orf search
+            results = [format_database_ids(dict(row)) for row in c.fetchall()]
+            
+            # For each ORF, get its position information
+            for result in results:
+                orf_id = result['orf_id']
+                c.execute('''
+                    SELECT op.*, f.freezer_location, p.plasmid_name
+                    FROM orf_position op
+                    LEFT JOIN freezer f ON op.freezer_id = f.freezer_id
+                    LEFT JOIN plasmid p ON op.plasmid_id = p.plasmid_id
+                    WHERE op.orf_id = ?
+                ''', (orf_id,))
+                
+                position_data = [dict(row) for row in c.fetchall()]
+                result['positions'] = position_data
+                
+                # Check if yeast_orf_position table exists and has position_type
+                c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='yeast_orf_position'")
+                yeast_table_exists = c.fetchone()
+                
+                yeast_position_data = []
+                if yeast_table_exists:
+                    # Check if position_type column exists
+                    c.execute("PRAGMA table_info(yeast_orf_position)")
+                    columns = [column[1] for column in c.fetchall()]
+                    has_position_type = 'position_type' in columns
+                    
+                    # Get yeast positions information
+                    if has_position_type:
+                        c.execute('''
+                            SELECT id, orf_id, plate, well, position_type 
+                            FROM yeast_orf_position
+                            WHERE orf_id = ?
+                        ''', (orf_id,))
+                    else:
+                        c.execute('''
+                            SELECT id, orf_id, plate, well, 'AD' as position_type 
+                            FROM yeast_orf_position
+                            WHERE orf_id = ?
+                        ''', (orf_id,))
+                    
+                    yeast_position_data = [dict(row) for row in c.fetchall()]
+                result['yeast_positions'] = yeast_position_data
+                
+                # Check if orf_sources table exists
+                c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='orf_sources'")
+                sources_table_exists = c.fetchone()
+                
+                source_data = []
+                if sources_table_exists:
+                    # Get source information
+                    c.execute('''
+                        SELECT * FROM orf_sources
+                        WHERE orf_id = ?
+                        ORDER BY submission_date DESC
+                    ''', (orf_id,))
+                    
+                    source_data = [dict(row) for row in c.fetchall()]
+                result['sources'] = source_data
+        
+        elif query_type == 'plasmid':
+            # Search for plasmid by name, id, or description
+            query = f'''
+                SELECT p.*, COUNT(os.orf_id) as orf_count
+                FROM plasmid p
+                LEFT JOIN orf_position op ON p.plasmid_id = op.plasmid_id
+                LEFT JOIN orf_sequence os ON op.orf_id = os.orf_id
+                WHERE (p.plasmid_name {operator} ? OR p.plasmid_id {operator} ? OR p.plasmid_description {operator} ?)
+                GROUP BY p.plasmid_id
+            '''
+            
+            print(f"Plasmid search query: {query}")
+            print(f"Params: {[search_pattern, search_pattern, search_pattern]}")
+            
+            c.execute(query, [search_pattern, search_pattern, search_pattern])
+            # Don't use format_database_ids for plasmid search
+            plasmid_results = [dict(row) for row in c.fetchall()]
+            
+            print(f"Plasmid results: {len(plasmid_results)}")
+            
+            # For each plasmid, get its ORFs
+            for plasmid in plasmid_results:
+                plasmid_id = plasmid['plasmid_id']
+                c.execute('''
+                    SELECT os.*, o.organism_name
+                    FROM orf_sequence os
+                    JOIN orf_position op ON os.orf_id = op.orf_id
+                    LEFT JOIN organisms o ON os.orf_organism_id = o.organism_id
+                    WHERE op.plasmid_id = ?
+                ''', (plasmid_id,))
+                
+                orfs = [dict(row) for row in c.fetchall()]
+                plasmid['orfs'] = orfs
+            
+            results = plasmid_results
+            
+        elif query_type == 'organism':
+            # Search for organism by name, taxonomy, or strain
+            query = f'''
+                SELECT o.*, COUNT(os.orf_id) as orf_count
+                FROM organisms o
+                LEFT JOIN orf_sequence os ON o.organism_id = os.orf_organism_id
+                WHERE (o.organism_name {operator} ? OR o.organism_genus {operator} ? OR o.organism_species {operator} ? OR o.organism_strain {operator} ?)
+                GROUP BY o.organism_id
+            '''
+            
+            print(f"Organism search query: {query}")
+            print(f"Params: {[search_pattern, search_pattern, search_pattern, search_pattern]}")
+            
+            c.execute(query, [search_pattern, search_pattern, search_pattern, search_pattern])
+            # Don't use format_database_ids for organism search
+            organism_results = [dict(row) for row in c.fetchall()]
+            
+            print(f"Organism results: {len(organism_results)}")
+            
+            # For each organism, get its ORFs
+            for organism in organism_results:
+                organism_id = organism['organism_id']
+                c.execute('''
+                    SELECT os.*
+                    FROM orf_sequence os
+                    WHERE os.orf_organism_id = ?
+                ''', (organism_id,))
+                
+                orfs = [dict(row) for row in c.fetchall()]
+                organism['orfs'] = orfs
+                
+                # Format taxonomy
+                if organism['organism_genus'] and organism['organism_species']:
+                    organism['taxonomy'] = f"{organism['organism_genus']} {organism['organism_species']}"
+                    if organism['organism_strain']:
+                        organism['taxonomy'] += f" ({organism['organism_strain']})"
+                else:
+                    organism['taxonomy'] = organism['organism_name']
+            
+            results = organism_results
+            
+        elif query_type == 'position':
+            # Search for position (plate-well)
+            # First check regular positions
+            position_parts = search_term.split('-')
+            if len(position_parts) == 2:
+                plate, well = position_parts
+            else:
+                plate = search_term
+                well = '%'  # Wildcard for well if not specified
+                
+            # Prepare search patterns for positions
+            if match_type == 'exact':
+                plate_pattern = plate
+                well_pattern = well
+                plate_op = '='
+                well_op = '='
+            else:
+                plate_pattern = f'%{plate}%'
+                well_pattern = f'%{well}%' if well != '%' else well
+                plate_op = 'LIKE'
+                well_op = 'LIKE'
+            
+            print(f"Position search: plate={plate_pattern}, well={well_pattern}")
+            
+            # Search in orf_position table
+            query = f'''
+                SELECT op.*, os.*, o.organism_name, p.plasmid_name, f.freezer_location
+                FROM orf_position op
+                JOIN orf_sequence os ON op.orf_id = os.orf_id
+                LEFT JOIN organisms o ON os.orf_organism_id = o.organism_id
+                LEFT JOIN plasmid p ON op.plasmid_id = p.plasmid_id
+                LEFT JOIN freezer f ON op.freezer_id = f.freezer_id
+                WHERE op.plate {plate_op} ? AND op.well {well_op} ?
+            '''
+            
+            print(f"Position search query: {query}")
+            print(f"Params: {[plate_pattern, well_pattern]}")
+            
+            c.execute(query, [plate_pattern, well_pattern])
+            position_results = [dict(row) for row in c.fetchall()]
+            
+            print(f"Position results: {len(position_results)}")
+            
+            # Also search in yeast_orf_position table if it exists
+            c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='yeast_orf_position'")
+            yeast_table_exists = c.fetchone()
+            
+            if yeast_table_exists:
+                # Check if position_type column exists
+                c.execute("PRAGMA table_info(yeast_orf_position)")
+                columns = [column[1] for column in c.fetchall()]
+                has_position_type = 'position_type' in columns
+                
+                if has_position_type:
+                    yeast_query = f'''
+                        SELECT yp.*, os.*, o.organism_name, yp.position_type
+                        FROM yeast_orf_position yp
+                        JOIN orf_sequence os ON yp.orf_id = os.orf_id
+                        LEFT JOIN organisms o ON os.orf_organism_id = o.organism_id
+                        WHERE yp.plate {plate_op} ? AND yp.well {well_op} ?
+                    '''
+                else:
+                    yeast_query = f'''
+                        SELECT yp.*, os.*, o.organism_name, 'AD' as position_type
+                        FROM yeast_orf_position yp
+                        JOIN orf_sequence os ON yp.orf_id = os.orf_id
+                        LEFT JOIN organisms o ON os.orf_organism_id = o.organism_id
+                        WHERE yp.plate {plate_op} ? AND yp.well {well_op} ?
+                    '''
+                
+                print(f"Yeast position search query: {yeast_query}")
+                
+                c.execute(yeast_query, [plate_pattern, well_pattern])
+                yeast_position_results = [dict(row) for row in c.fetchall()]
+                
+                print(f"Yeast position results: {len(yeast_position_results)}")
+                
+                # Mark the source of the position
+                for result in position_results:
+                    result['position_source'] = 'orf_position'
+                
+                for result in yeast_position_results:
+                    result['position_source'] = 'yeast_orf_position'
+                
+                # Combine results
+                results = position_results + yeast_position_results
+            else:
+                # Only regular positions
+                for result in position_results:
+                    result['position_source'] = 'orf_position'
+                
+                results = position_results
+            
+            # Add position information for each result
+            for result in results:
+                orf_id = result['orf_id']
+                
+                # Get regular positions
+                c.execute('''
+                    SELECT op.*, f.freezer_location, p.plasmid_name
+                    FROM orf_position op
+                    LEFT JOIN freezer f ON op.freezer_id = f.freezer_id
+                    LEFT JOIN plasmid p ON op.plasmid_id = p.plasmid_id
+                    WHERE op.orf_id = ?
+                ''', (orf_id,))
+                
+                position_data = [dict(row) for row in c.fetchall()]
+                result['positions'] = position_data
+                
+                # Get yeast positions if table exists
+                yeast_position_data = []
+                if yeast_table_exists:
+                    if has_position_type:
+                        c.execute('''
+                            SELECT id, orf_id, plate, well, position_type 
+                            FROM yeast_orf_position
+                            WHERE orf_id = ?
+                        ''', (orf_id,))
+                    else:
+                        c.execute('''
+                            SELECT id, orf_id, plate, well, 'AD' as position_type 
+                            FROM yeast_orf_position
+                            WHERE orf_id = ?
+                        ''', (orf_id,))
+                    
+                    yeast_position_data = [dict(row) for row in c.fetchall()]
+                result['yeast_positions'] = yeast_position_data
+        
+        # Use a set to track unique IDs to prevent duplicate results
+        unique_ids = set()
+        unique_results = []
+        
+        for result in results:
+            # Use the appropriate ID field based on query type
+            if query_type in ['plasmid', 'organism']:
+                id_field = f"{query_type}_id"
+            else:
+                id_field = 'orf_id'
+            
+            if id_field in result and result[id_field] not in unique_ids:
+                unique_ids.add(result[id_field])
+                unique_results.append(result)
+        
+        conn.close()
+        
+        print(f"Final results count: {len(unique_results)}")
+        
+        return jsonify({
+            'success': True, 
+            'results': unique_results, 
+            'count': len(unique_results),
+        })
+    
+    except Exception as e:
+        conn.close()
+        import traceback
+        print(f"Error in API search: {e}")
+        print(traceback.format_exc())
+        return jsonify({
+            'success': False,
+            'message': f"An error occurred: {str(e)}"
+        }), 500

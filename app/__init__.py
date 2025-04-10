@@ -11,6 +11,7 @@ app.secret_key = 'reagent_db_secret_key'  # For flash messages
 
 # Get database path from configuration
 DB_PATH = get_db_path()
+print(f"Database path initialized to: {DB_PATH}")
 
 # Get app base directory
 current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

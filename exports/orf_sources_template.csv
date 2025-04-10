@@ -1,0 +1,3 @@
+orf_id,source_name,source_details,source_url,submission_date,submitter,notes
+ORF999,Harvard PlasmID Repository,Clone ID: HsCD00001234,https://plasmid.med.harvard.edu/PLASMID/,2025-04-10,Jane Doe,Verified by sequencing
+Required,Required,Optional,Optional,Optional,Optional,Optional

@@ -10,15 +10,29 @@ def view_orf(orf_id):
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
     
-    # Get ORF details - use string comparison for text IDs
-    c.execute('''
-        SELECT os.*, o.organism_name, o.organism_genus, o.organism_species, o.organism_strain,
-               hgd.hgnc_approved_symbol as hgnc_symbol
-        FROM orf_sequence os
-        LEFT JOIN organisms o ON os.orf_organism_id = o.organism_id
-        LEFT JOIN human_gene_data hgd ON os.orf_id = hgd.orf_id
-        WHERE os.orf_id = ?
-    ''', (str(orf_id),))
+    # Check if human_gene_data table exists
+    c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='human_gene_data'")
+    human_gene_table_exists = c.fetchone()
+    
+    if human_gene_table_exists:
+        # Get ORF details with HGNC data
+        c.execute('''
+            SELECT os.*, o.organism_name, o.organism_genus, o.organism_species, o.organism_strain,
+                   hgd.hgnc_approved_symbol as hgnc_symbol
+            FROM orf_sequence os
+            LEFT JOIN organisms o ON os.orf_organism_id = o.organism_id
+            LEFT JOIN human_gene_data hgd ON os.orf_id = hgd.orf_id
+            WHERE os.orf_id = ?
+        ''', (str(orf_id),))
+    else:
+        # Get ORF details without HGNC data
+        c.execute('''
+            SELECT os.*, o.organism_name, o.organism_genus, o.organism_species, o.organism_strain,
+                   NULL as hgnc_symbol
+            FROM orf_sequence os
+            LEFT JOIN organisms o ON os.orf_organism_id = o.organism_id
+            WHERE os.orf_id = ?
+        ''', (str(orf_id),))
     
     orf_data = c.fetchone()
     
@@ -39,6 +53,37 @@ def view_orf(orf_id):
     
     positions = [dict(row) for row in c.fetchall()]
     orf_data['positions'] = positions
+    
+    # Check if yeast_orf_position table exists
+    c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='yeast_orf_position'")
+    yeast_table_exists = c.fetchone()
+    
+    yeast_positions = []
+    if yeast_table_exists:
+        # Get yeast position information
+        c.execute('''
+            SELECT * FROM yeast_orf_position
+            WHERE orf_id = ?
+        ''', (str(orf_id),))
+        
+        yeast_positions = [dict(row) for row in c.fetchall()]
+    orf_data['yeast_positions'] = yeast_positions
+    
+    # Check if orf_sources table exists
+    c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='orf_sources'")
+    sources_table_exists = c.fetchone()
+    
+    sources = []
+    if sources_table_exists:
+        # Get source information
+        c.execute('''
+            SELECT * FROM orf_sources
+            WHERE orf_id = ?
+            ORDER BY submission_date DESC
+        ''', (str(orf_id),))
+        
+        sources = [dict(row) for row in c.fetchall()]
+    orf_data['sources'] = sources
     
     conn.close()
     return render_template('detail_orf.html', data=orf_data)
@@ -165,15 +210,29 @@ def api_detail_orf(orf_id):
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
     
-    # Get ORF details - ensure string comparison for text IDs
-    c.execute('''
-        SELECT os.*, o.organism_name, o.organism_genus, o.organism_species,
-               hgd.hgnc_approved_symbol as hgnc_symbol
-        FROM orf_sequence os
-        LEFT JOIN organisms o ON os.orf_organism_id = o.organism_id
-        LEFT JOIN human_gene_data hgd ON os.orf_id = hgd.orf_id
-        WHERE os.orf_id = ?
-    ''', (str(orf_id),))
+    # Check if human_gene_data table exists
+    c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='human_gene_data'")
+    human_gene_table_exists = c.fetchone()
+    
+    if human_gene_table_exists:
+        # Get ORF details with HGNC data
+        c.execute('''
+            SELECT os.*, o.organism_name, o.organism_genus, o.organism_species,
+                   hgd.hgnc_approved_symbol as hgnc_symbol
+            FROM orf_sequence os
+            LEFT JOIN organisms o ON os.orf_organism_id = o.organism_id
+            LEFT JOIN human_gene_data hgd ON os.orf_id = hgd.orf_id
+            WHERE os.orf_id = ?
+        ''', (str(orf_id),))
+    else:
+        # Get ORF details without HGNC data
+        c.execute('''
+            SELECT os.*, o.organism_name, o.organism_genus, o.organism_species,
+                   NULL as hgnc_symbol
+            FROM orf_sequence os
+            LEFT JOIN organisms o ON os.orf_organism_id = o.organism_id
+            WHERE os.orf_id = ?
+        ''', (str(orf_id),))
     
     orf_data = c.fetchone()
     
@@ -194,6 +253,21 @@ def api_detail_orf(orf_id):
     
     positions = [dict(row) for row in c.fetchall()]
     orf_data['positions'] = positions
+    
+    # Check if yeast_orf_position table exists
+    c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='yeast_orf_position'")
+    yeast_table_exists = c.fetchone()
+    
+    yeast_positions = []
+    if yeast_table_exists:
+        # Get yeast position information
+        c.execute('''
+            SELECT * FROM yeast_orf_position
+            WHERE orf_id = ?
+        ''', (str(orf_id),))
+        
+        yeast_positions = [dict(row) for row in c.fetchall()]
+    orf_data['yeast_positions'] = yeast_positions
     
     conn.close()
     return jsonify({'success': True, 'data': orf_data})

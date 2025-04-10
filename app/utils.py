@@ -99,6 +99,19 @@ def get_column_info(import_type):
         # Specify which fields are required
         required_fields = ['orf_id', 'plate', 'well']
         
+    elif import_type == 'yeast_orf_position':
+        columns = ['orf_id', 'plate', 'well']
+        
+        # Create example row
+        example = {
+            'orf_id': 'ORF999',
+            'plate': 'Yeast Plate A',
+            'well': 'A01'
+        }
+        
+        # Specify which fields are required
+        required_fields = ['orf_id', 'plate', 'well']
+        
     elif import_type == 'plasmid':
         columns = ['plasmid_id', 'plasmid_name', 'plasmid_type', 'plasmid_express_organism', 'plasmid_description']
         
@@ -142,6 +155,24 @@ def get_column_info(import_type):
         
         # Specify which fields are required
         required_fields = ['freezer_id', 'freezer_location']
+        
+    elif import_type == 'orf_sources':
+        columns = ['orf_id', 'source_name', 'source_details', 'source_url', 'submission_date', 'submitter', 'notes']
+        
+        # Create example row
+        example = {
+            'orf_id': 'ORF999',
+            'source_name': 'Harvard PlasmID Repository',
+            'source_details': 'Clone ID: HsCD00001234',
+            'source_url': 'https://plasmid.med.harvard.edu/PLASMID/',
+            'submission_date': datetime.now().strftime('%Y-%m-%d'),
+            'submitter': 'Jane Doe',
+            'notes': 'Verified by sequencing'
+        }
+        
+        # Specify which fields are required
+        required_fields = ['orf_id', 'source_name']
+        
     else:
         return None, None, None
         

@@ -1,0 +1,5 @@
+orf_id,source_name,source_details,source_url,submission_date,submitter,notes
+55703,MGC Collection,Human MGC cDNA clone,https://genecollections.nci.nih.gov/MGC/,2023-07-15,Lab Member 1,Fully sequenced
+55704,Addgene,Plasmid repository,https://www.addgene.org/,2023-08-20,Lab Member 2,Expression validated
+55705,Synthego,Custom synthesis,https://www.synthego.com/,2023-09-10,Lab Member 3,Codon optimized for E. coli
+55703,Dharmacon,siRNA Library,https://horizondiscovery.com/,2023-10-05,Lab Member 4,Used for knockdown studies

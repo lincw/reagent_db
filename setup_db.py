@@ -78,6 +78,30 @@ def init_db():
         )
         ''')
         
+        c.execute('''
+        CREATE TABLE orf_sources (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            orf_id TEXT,
+            source_name TEXT,
+            source_details TEXT,
+            source_url TEXT,
+            submission_date TEXT,
+            submitter TEXT,
+            notes TEXT,
+            FOREIGN KEY (orf_id) REFERENCES orf_sequence (orf_id)
+        )
+        ''')
+        
+        c.execute('''
+        CREATE TABLE yeast_orf_position (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            orf_id TEXT,
+            plate TEXT,
+            well TEXT,
+            FOREIGN KEY (orf_id) REFERENCES orf_sequence (orf_id)
+        )
+        ''')
+        
         conn.commit()
         conn.close()
         print('Database schema created successfully')

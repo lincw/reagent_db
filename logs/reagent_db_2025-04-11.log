@@ -1,0 +1,140 @@
+2025-04-11 00:02:36,870 - root - INFO - Application starting
+2025-04-11 00:02:36,876 - werkzeug - WARNING -  * Debugger is active!
+2025-04-11 00:02:36,883 - werkzeug - INFO -  * Debugger PIN: 438-739-022
+2025-04-11 00:03:28,846 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:03:28] "GET / HTTP/1.1" 200 -
+2025-04-11 00:03:29,049 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:03:29] "[33mGET /apple-touch-icon-precomposed.png HTTP/1.1[0m" 404 -
+2025-04-11 00:03:29,073 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:03:29] "[33mGET /apple-touch-icon.png HTTP/1.1[0m" 404 -
+2025-04-11 00:03:29,099 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:03:29] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-04-11 00:03:29,173 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:03:29] "GET /api/organisms HTTP/1.1" 200 -
+2025-04-11 00:03:34,554 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:03:34] "GET /api/search?type=gene&query=atm&match=exact HTTP/1.1" 200 -
+2025-04-11 00:03:39,991 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:03:39] "GET /api/search?type=orf&query=pgk1&match=exact HTTP/1.1" 200 -
+2025-04-11 00:03:45,837 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:03:45] "GET /api/search?type=position&query=a3&match=exact HTTP/1.1" 200 -
+2025-04-11 00:04:00,160 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:04:00] "GET /api/search?type=gene&query=brca1&match=exact HTTP/1.1" 200 -
+2025-04-11 00:04:03,307 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:04:03] "GET /api/search?type=gene&query=brca1&match=partial HTTP/1.1" 200 -
+2025-04-11 00:04:16,512 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:04:16] "GET /api/search?type=gene&query=ATM&match=exact HTTP/1.1" 200 -
+2025-04-11 00:04:21,331 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:04:21] "GET /api/search?type=gene&query=ATM&match=partial HTTP/1.1" 200 -
+2025-04-11 00:04:23,763 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:04:23] "GET /api/search?type=gene&query=ATM&match=exact HTTP/1.1" 200 -
+2025-04-11 00:04:29,458 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:04:29] "GET /api/search?type=orf&query=ATM&match=exact HTTP/1.1" 200 -
+2025-04-11 00:04:31,698 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:04:31] "GET /api/search?type=orf&query=ATM&match=partial HTTP/1.1" 200 -
+2025-04-11 00:04:41,092 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:04:41] "GET /api/search?type=organism&query=human&match=partial HTTP/1.1" 200 -
+2025-04-11 00:04:46,896 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:04:46] "GET /api/search?type=organism&query=9606&match=partial HTTP/1.1" 200 -
+2025-04-11 00:04:48,674 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:04:48] "GET /api/search?type=organism&query=9606&match=partial HTTP/1.1" 200 -
+2025-04-11 00:04:51,434 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:04:51] "GET /api/search?type=organism&query=9606&match=exact HTTP/1.1" 200 -
+2025-04-11 00:04:55,970 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:04:55] "GET /api/search?type=position&query=a3&match=exact HTTP/1.1" 200 -
+2025-04-11 00:04:57,897 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:04:57] "GET /api/search?type=position&query=a3&match=partial HTTP/1.1" 200 -
+2025-04-11 00:04:59,737 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:04:59] "GET /api/search?type=position&query=a3&match=partial HTTP/1.1" 200 -
+2025-04-11 00:05:03,735 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:05:03] "GET /api/search?type=position&query=A1&match=partial HTTP/1.1" 200 -
+2025-04-11 00:05:19,179 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:05:19] "GET /api/search?type=position&query=10&match=partial HTTP/1.1" 200 -
+2025-04-11 00:08:16,671 - werkzeug - INFO -  * Detected change in '/Users/chung-wen.lin/Git_repo/reagent_db/app/routes/search.py', reloading
+2025-04-11 00:08:17,482 - root - INFO - Application starting
+2025-04-11 00:08:17,488 - werkzeug - WARNING -  * Debugger is active!
+2025-04-11 00:08:17,496 - werkzeug - INFO -  * Debugger PIN: 438-739-022
+2025-04-11 00:08:26,263 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:08:26] "GET / HTTP/1.1" 200 -
+2025-04-11 00:08:26,572 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:08:26] "[33mGET /apple-touch-icon-precomposed.png HTTP/1.1[0m" 404 -
+2025-04-11 00:08:26,573 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:08:26] "[33mGET /apple-touch-icon.png HTTP/1.1[0m" 404 -
+2025-04-11 00:08:26,574 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:08:26] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-04-11 00:08:26,676 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:08:26] "GET /api/organisms HTTP/1.1" 200 -
+2025-04-11 00:08:31,602 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:08:31] "GET /api/search?type=gene&query=atm&match=exact HTTP/1.1" 200 -
+2025-04-11 00:08:34,810 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:08:34] "GET /api/search?type=gene&query=atm&match=partial HTTP/1.1" 200 -
+2025-04-11 00:08:38,618 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:08:38] "GET /api/search?type=gene&query=atm&match=exact HTTP/1.1" 200 -
+2025-04-11 00:08:40,860 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:08:40] "GET /api/search?type=gene&query=atm&match=partial HTTP/1.1" 200 -
+2025-04-11 00:09:14,413 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:09:14] "GET /batch_search HTTP/1.1" 200 -
+2025-04-11 00:09:14,564 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:09:14] "GET /api/search_organisms HTTP/1.1" 200 -
+2025-04-11 00:09:28,723 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:09:28] "POST /batch_search HTTP/1.1" 200 -
+2025-04-11 00:09:35,161 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:09:35] "POST /batch_search HTTP/1.1" 200 -
+2025-04-11 00:09:44,368 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:09:44] "POST /batch_search HTTP/1.1" 200 -
+2025-04-11 00:13:09,942 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:13:09] "GET / HTTP/1.1" 200 -
+2025-04-11 00:13:10,103 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:13:10] "[33mGET /apple-touch-icon-precomposed.png HTTP/1.1[0m" 404 -
+2025-04-11 00:13:10,105 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:13:10] "[33mGET /apple-touch-icon.png HTTP/1.1[0m" 404 -
+2025-04-11 00:13:10,107 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:13:10] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-04-11 00:13:10,328 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:13:10] "GET /api/organisms HTTP/1.1" 200 -
+2025-04-11 00:13:11,959 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:13:11] "GET /api/stats HTTP/1.1" 200 -
+2025-04-11 00:13:22,751 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:13:22] "GET /import HTTP/1.1" 200 -
+2025-04-11 00:13:49,815 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:13:49] "POST /import_file HTTP/1.1" 200 -
+2025-04-11 00:13:57,741 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:13:57] "POST /import_file HTTP/1.1" 200 -
+2025-04-11 00:13:59,779 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:13:59] "GET / HTTP/1.1" 200 -
+2025-04-11 00:14:00,061 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:14:00] "GET /api/organisms HTTP/1.1" 200 -
+2025-04-11 00:14:29,372 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:14:29] "GET /api/stats HTTP/1.1" 200 -
+2025-04-11 00:14:33,556 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:14:33] "GET /api/stats HTTP/1.1" 200 -
+2025-04-11 00:14:44,483 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:14:44] "GET /api/stats HTTP/1.1" 200 -
+2025-04-11 00:14:49,800 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:14:49] "GET /api/stats HTTP/1.1" 200 -
+2025-04-11 00:14:50,766 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:14:50] "GET /api/stats HTTP/1.1" 200 -
+2025-04-11 00:15:08,813 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:15:08] "GET /api/stats HTTP/1.1" 200 -
+2025-04-11 00:15:14,210 - root - INFO - Application starting
+2025-04-11 00:15:14,218 - werkzeug - INFO -  * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+2025-04-11 00:15:14,219 - werkzeug - INFO -  * Restarting with stat
+2025-04-11 00:15:14,659 - root - INFO - Application starting
+2025-04-11 00:15:14,663 - werkzeug - WARNING -  * Debugger is active!
+2025-04-11 00:15:14,672 - werkzeug - INFO -  * Debugger PIN: 438-739-022
+2025-04-11 00:15:15,944 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:15:15] "GET / HTTP/1.1" 200 -
+2025-04-11 00:15:16,239 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:15:16] "[33mGET /apple-touch-icon-precomposed.png HTTP/1.1[0m" 404 -
+2025-04-11 00:15:16,242 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:15:16] "[33mGET /apple-touch-icon.png HTTP/1.1[0m" 404 -
+2025-04-11 00:15:16,243 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:15:16] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-04-11 00:15:16,456 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:15:16] "GET /api/organisms HTTP/1.1" 200 -
+2025-04-11 00:15:19,475 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:15:19] "GET /import HTTP/1.1" 200 -
+2025-04-11 00:16:30,004 - werkzeug - INFO -  * Detected change in '/Users/chung-wen.lin/Git_repo/reagent_db/utils/import_yeast_positions.py', reloading
+2025-04-11 00:16:30,099 - werkzeug - INFO -  * Restarting with stat
+2025-04-11 00:16:30,789 - root - INFO - Application starting
+2025-04-11 00:16:30,796 - werkzeug - WARNING -  * Debugger is active!
+2025-04-11 00:16:30,802 - werkzeug - INFO -  * Debugger PIN: 438-739-022
+2025-04-11 00:16:40,093 - werkzeug - INFO -  * Detected change in '/Users/chung-wen.lin/Git_repo/reagent_db/utils/import_yeast_positions.py', reloading
+2025-04-11 00:16:40,172 - werkzeug - INFO -  * Restarting with stat
+2025-04-11 00:16:40,631 - root - INFO - Application starting
+2025-04-11 00:16:40,636 - werkzeug - WARNING -  * Debugger is active!
+2025-04-11 00:16:40,643 - werkzeug - INFO -  * Debugger PIN: 438-739-022
+2025-04-11 00:18:25,343 - werkzeug - INFO -  * Detected change in '/Users/chung-wen.lin/Git_repo/reagent_db/utils/import_yeast_positions.py', reloading
+2025-04-11 00:18:25,565 - werkzeug - INFO -  * Restarting with stat
+2025-04-11 00:18:26,475 - root - INFO - Application starting
+2025-04-11 00:18:26,482 - werkzeug - WARNING -  * Debugger is active!
+2025-04-11 00:18:26,497 - werkzeug - INFO -  * Debugger PIN: 438-739-022
+2025-04-11 00:18:40,140 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:18:40] "GET /import HTTP/1.1" 200 -
+2025-04-11 00:18:48,042 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:18:48] "POST /import_file HTTP/1.1" 200 -
+2025-04-11 00:18:54,098 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:18:54] "POST /import_file HTTP/1.1" 200 -
+2025-04-11 00:18:54,977 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:18:54] "GET / HTTP/1.1" 200 -
+2025-04-11 00:18:55,130 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:18:55] "[33mGET /apple-touch-icon-precomposed.png HTTP/1.1[0m" 404 -
+2025-04-11 00:18:55,133 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:18:55] "[33mGET /apple-touch-icon.png HTTP/1.1[0m" 404 -
+2025-04-11 00:18:55,134 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:18:55] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-04-11 00:18:55,241 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:18:55] "GET /api/organisms HTTP/1.1" 200 -
+2025-04-11 00:18:57,819 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:18:57] "GET /api/stats HTTP/1.1" 200 -
+2025-04-11 00:19:37,405 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:19:37] "GET /api/stats HTTP/1.1" 200 -
+2025-04-11 00:20:07,905 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:20:07] "GET / HTTP/1.1" 200 -
+2025-04-11 00:20:08,440 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:20:08] "[33mGET /apple-touch-icon.png HTTP/1.1[0m" 404 -
+2025-04-11 00:20:08,443 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:20:08] "[33mGET /apple-touch-icon-precomposed.png HTTP/1.1[0m" 404 -
+2025-04-11 00:20:08,444 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:20:08] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-04-11 00:20:08,560 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:20:08] "GET /api/organisms HTTP/1.1" 200 -
+2025-04-11 00:20:09,792 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:20:09] "GET /import HTTP/1.1" 200 -
+2025-04-11 00:20:17,739 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:20:17] "POST /import_file HTTP/1.1" 200 -
+2025-04-11 00:20:18,889 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:20:18] "GET / HTTP/1.1" 200 -
+2025-04-11 00:20:19,117 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:20:19] "GET /api/organisms HTTP/1.1" 200 -
+2025-04-11 00:22:06,895 - werkzeug - INFO -  * Detected change in '/Users/chung-wen.lin/Git_repo/reagent_db/utils/import_yeast_positions.py', reloading
+2025-04-11 00:22:07,015 - werkzeug - INFO -  * Restarting with stat
+2025-04-11 00:22:07,920 - root - INFO - Application starting
+2025-04-11 00:22:07,927 - werkzeug - WARNING -  * Debugger is active!
+2025-04-11 00:22:07,935 - werkzeug - INFO -  * Debugger PIN: 438-739-022
+2025-04-11 00:22:20,903 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:22:20] "GET / HTTP/1.1" 200 -
+2025-04-11 00:22:21,121 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:22:21] "[33mGET /apple-touch-icon-precomposed.png HTTP/1.1[0m" 404 -
+2025-04-11 00:22:21,135 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:22:21] "[33mGET /apple-touch-icon.png HTTP/1.1[0m" 404 -
+2025-04-11 00:22:21,143 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:22:21] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-04-11 00:22:21,168 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:22:21] "GET /api/organisms HTTP/1.1" 200 -
+2025-04-11 00:24:32,738 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:24:32] "GET / HTTP/1.1" 200 -
+2025-04-11 00:24:32,929 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:24:32] "[33mGET /apple-touch-icon-precomposed.png HTTP/1.1[0m" 404 -
+2025-04-11 00:24:32,942 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:24:32] "[33mGET /apple-touch-icon.png HTTP/1.1[0m" 404 -
+2025-04-11 00:24:32,974 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:24:32] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-04-11 00:24:33,009 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:24:33] "GET /api/organisms HTTP/1.1" 200 -
+2025-04-11 00:24:34,812 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:24:34] "GET /api/stats HTTP/1.1" 200 -
+2025-04-11 00:24:36,244 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:24:36] "GET /api/stats HTTP/1.1" 200 -
+2025-04-11 00:24:47,465 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:24:47] "GET /import HTTP/1.1" 200 -
+2025-04-11 00:24:56,537 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:24:56] "GET / HTTP/1.1" 200 -
+2025-04-11 00:24:56,763 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:24:56] "GET /api/organisms HTTP/1.1" 200 -
+2025-04-11 00:24:59,386 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:24:59] "GET /api/stats HTTP/1.1" 200 -
+2025-04-11 00:24:59,968 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:24:59] "POST /import_file HTTP/1.1" 200 -
+2025-04-11 00:25:01,971 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:25:01] "GET /import HTTP/1.1" 200 -
+2025-04-11 00:25:12,257 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:25:12] "POST /import_file HTTP/1.1" 200 -
+2025-04-11 00:25:19,549 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:25:19] "GET / HTTP/1.1" 200 -
+2025-04-11 00:25:19,894 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:25:19] "GET /api/organisms HTTP/1.1" 200 -
+2025-04-11 00:25:21,801 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:25:21] "GET /api/stats HTTP/1.1" 200 -
+2025-04-11 00:25:31,562 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:25:31] "GET /api/search?type=gene&query=atm&match=exact HTTP/1.1" 200 -
+2025-04-11 00:25:33,737 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:25:33] "GET /api/search?type=gene&query=atm&match=partial HTTP/1.1" 200 -
+2025-04-11 00:25:46,807 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:25:46] "GET /batch_search HTTP/1.1" 200 -
+2025-04-11 00:25:46,934 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:25:46] "GET /api/search_organisms HTTP/1.1" 200 -
+2025-04-11 00:25:50,121 - werkzeug - INFO - 127.0.0.1 - - [11/Apr/2025 00:25:50] "POST /batch_search HTTP/1.1" 200 -

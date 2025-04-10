@@ -1,0 +1,40 @@
+2025-04-08 11:06:35,618 - root - INFO - Application starting
+2025-04-08 11:06:35,630 - werkzeug - INFO -  * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+2025-04-08 11:06:35,631 - werkzeug - INFO -  * Restarting with stat
+2025-04-08 11:06:36,006 - root - INFO - Application starting
+2025-04-08 11:06:36,008 - werkzeug - WARNING -  * Debugger is active!
+2025-04-08 11:06:36,020 - werkzeug - INFO -  * Debugger PIN: 997-482-379
+2025-04-08 11:06:51,115 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 11:06:51] "GET / HTTP/1.1" 200 -
+2025-04-08 11:06:52,011 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 11:06:52] "GET /api/search_organisms HTTP/1.1" 200 -
+2025-04-08 11:06:52,092 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 11:06:52] "GET /api/search_examples HTTP/1.1" 200 -
+2025-04-08 11:06:52,260 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 11:06:52] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-04-08 11:07:52,162 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 11:07:52] "GET /api/stats HTTP/1.1" 200 -
+2025-04-08 11:08:52,250 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 11:08:52] "GET /api/stats HTTP/1.1" 200 -
+2025-04-08 11:09:52,348 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 11:09:52] "GET /api/stats HTTP/1.1" 200 -
+2025-04-08 11:10:52,435 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 11:10:52] "GET /api/stats HTTP/1.1" 200 -
+2025-04-08 11:11:52,516 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 11:11:52] "GET /api/stats HTTP/1.1" 200 -
+2025-04-08 11:12:52,694 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 11:12:52] "GET /api/stats HTTP/1.1" 200 -
+2025-04-08 11:14:19,520 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 11:14:19] "GET /api/stats HTTP/1.1" 200 -
+2025-04-08 11:15:19,527 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 11:15:19] "GET /api/stats HTTP/1.1" 200 -
+2025-04-08 11:16:20,172 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 11:16:20] "GET /api/stats HTTP/1.1" 200 -
+2025-04-08 11:16:36,229 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 11:16:36] "GET /batch_search HTTP/1.1" 200 -
+2025-04-08 11:16:36,345 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 11:16:36] "GET /api/search_organisms HTTP/1.1" 200 -
+2025-04-08 11:16:47,227 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 11:16:47] "POST /batch_search HTTP/1.1" 200 -
+2025-04-08 11:16:58,161 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 11:16:58] "POST /batch_search HTTP/1.1" 200 -
+2025-04-08 11:57:10,739 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 11:57:10] "GET / HTTP/1.1" 200 -
+2025-04-08 11:57:10,864 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 11:57:10] "GET /api/search_organisms HTTP/1.1" 200 -
+2025-04-08 11:57:10,928 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 11:57:10] "GET /api/search_examples HTTP/1.1" 200 -
+2025-04-08 11:58:11,003 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 11:58:11] "GET /api/stats HTTP/1.1" 200 -
+2025-04-08 11:59:11,087 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 11:59:11] "GET /api/stats HTTP/1.1" 200 -
+2025-04-08 12:00:11,195 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 12:00:11] "GET /api/stats HTTP/1.1" 200 -
+2025-04-08 12:01:11,281 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 12:01:11] "GET /api/stats HTTP/1.1" 200 -
+2025-04-08 12:02:11,380 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 12:02:11] "GET /api/stats HTTP/1.1" 200 -
+2025-04-08 12:03:11,459 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 12:03:11] "GET /api/stats HTTP/1.1" 200 -
+2025-04-08 12:05:23,058 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 12:05:23] "GET /api/stats HTTP/1.1" 200 -
+2025-04-08 12:12:53,031 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 12:12:53] "GET /api/stats HTTP/1.1" 200 -
+2025-04-08 12:23:04,711 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 12:23:04] "GET /api/stats HTTP/1.1" 200 -
+2025-04-08 12:24:04,741 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 12:24:04] "GET /api/stats HTTP/1.1" 200 -
+2025-04-08 12:25:17,802 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 12:25:17] "GET /api/stats HTTP/1.1" 200 -
+2025-04-08 12:27:13,789 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 12:27:13] "GET /api/stats HTTP/1.1" 200 -
+2025-04-08 12:30:16,876 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 12:30:16] "GET /api/stats HTTP/1.1" 200 -
+2025-04-08 20:05:00,885 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:05:00] "GET /api/stats HTTP/1.1" 200 -

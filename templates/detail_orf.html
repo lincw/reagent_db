@@ -134,7 +134,7 @@
 <div class="detail-section">
     <div class="card">
         <div class="card-header">
-            <h4>Storage Locations</h4>
+            <h4>Storage Locations (Entry Clone)</h4>
         </div>
         <div class="card-body">
             {% if data.positions and data.positions|length > 0 %}
@@ -182,7 +182,168 @@
             </div>
             {% else %}
             <div class="alert alert-info">
-                No storage locations found for this ORF.
+                No entry clone storage locations found for this ORF.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="detail-section">
+    <div class="card">
+        <div class="card-header">
+            <h4>Storage Locations (Yeast Clone)</h4>
+        </div>
+        <div class="card-body">
+            {% if data.yeast_positions and data.yeast_positions|length > 0 %}
+            <ul class="nav nav-tabs mb-3" id="yeastPositionTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="yeast-ad-tab" data-bs-toggle="tab" data-bs-target="#yeast-ad" type="button" role="tab" aria-controls="yeast-ad" aria-selected="true">
+                        Activation Domain (AD)
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="yeast-db-tab" data-bs-toggle="tab" data-bs-target="#yeast-db" type="button" role="tab" aria-controls="yeast-db" aria-selected="false">
+                        DNA Binding Domain (DB)
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="yeast-all-tab" data-bs-toggle="tab" data-bs-target="#yeast-all" type="button" role="tab" aria-controls="yeast-all" aria-selected="false">
+                        All Positions
+                    </button>
+                </li>
+            </ul>
+            
+            <div class="tab-content" id="yeastPositionTabsContent">
+                <!-- AD Positions Tab -->
+                <div class="tab-pane fade show active" id="yeast-ad" role="tabpanel" aria-labelledby="yeast-ad-tab">
+                    {% set ad_positions = data.yeast_positions|selectattr('position_type', 'undefined')|list + data.yeast_positions|selectattr('position_type', 'equalto', 'AD')|list %}
+                    {% if ad_positions|length > 0 %}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Plate</th>
+                                    <th>Well</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pos in ad_positions %}
+                                <tr>
+                                    <td>{{ pos.plate }}</td>
+                                    <td>{{ pos.well }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        No AD yeast clone positions found for this ORF.
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- DB Positions Tab -->
+                <div class="tab-pane fade" id="yeast-db" role="tabpanel" aria-labelledby="yeast-db-tab">
+                    {% set db_positions = data.yeast_positions|selectattr('position_type', 'equalto', 'DB')|list %}
+                    {% if db_positions|length > 0 %}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Plate</th>
+                                    <th>Well</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pos in db_positions %}
+                                <tr>
+                                    <td>{{ pos.plate }}</td>
+                                    <td>{{ pos.well }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        No DB yeast clone positions found for this ORF.
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- All Positions Tab -->
+                <div class="tab-pane fade" id="yeast-all" role="tabpanel" aria-labelledby="yeast-all-tab">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Plate</th>
+                                    <th>Well</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pos in data.yeast_positions %}
+                                <tr>
+                                    <td>
+                                        {% if pos.position_type == 'DB' %}
+                                            <span class="badge bg-success">DB</span>
+                                        {% else %}
+                                            <span class="badge bg-primary">AD</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ pos.plate }}</td>
+                                    <td>{{ pos.well }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                No yeast clone storage locations found for this ORF.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="detail-section">
+    <div class="card">
+        <div class="card-header">
+            <h4>ORF Sources</h4>
+        </div>
+        <div class="card-body">
+            {% if data.sources and data.sources|length > 0 %}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Source</th>
+                            <th>Details</th>
+                            <th>Submission Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for source in data.sources %}
+                        <tr>
+                            <td>
+                                <span class="badge bg-primary">{{ source.source_name }}</span>
+                            </td>
+                            <td>{{ source.source_details or 'No additional details' }}</td>
+                            <td>{{ source.submission_date or 'Unknown' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                No source information available for this ORF.
             </div>
             {% endif %}
         </div>

@@ -45,6 +45,8 @@
                                 <option value="" selected disabled>Select type</option>
                                 <option value="orf_sequence">ORF Sequence</option>
                                 <option value="orf_position">ORF Position</option>
+                                <option value="yeast_orf_position">Yeast ORF Position</option>
+                                <option value="orf_sources">ORF Sources</option>
                                 <option value="plasmid">Plasmid</option>
                                 <option value="organism">Organism</option>
                                 <option value="freezer">Freezer</option>
@@ -61,7 +63,8 @@
                                 <strong>Import Behavior:</strong>
                                 <ul class="mb-0">
                                     <li><strong>For ORF sequences, plasmids, organisms, and freezers</strong>: Records with existing IDs will be <strong>updated</strong> with new values.</li>
-                                    <li><strong>For ORF positions</strong>: Only new unique positions can be imported. Duplicates will cause errors.</li>
+                                    <li><strong>For ORF positions</strong>: Each combination of ORF ID, plate, and well must be unique. The system will reject entries where this combination already exists in the database.</li>
+                                    <li><strong>For ORF sources</strong>: Multiple sources can be associated with the same ORF. Each source entry should reference an existing ORF ID.</li>
                                     <li>Fields marked as "Required" in templates must be included for successful import.</li>
                                 </ul>
                             </div>
@@ -104,6 +107,29 @@
                         <div class="col-md-4 mb-3">
                             <div class="card h-100">
                                 <div class="card-body">
+                                    <h5 class="card-title">Yeast ORF Position</h5>
+                                    <p class="card-text small">Template for yeast clone positions</p>
+                                    <button class="btn btn-sm btn-outline-primary download-template" data-type="yeast_orf_position" data-format="csv">CSV</button>
+                                    <button class="btn btn-sm btn-outline-success download-template" data-type="yeast_orf_position" data-format="xlsx">Excel</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">ORF Sources</h5>
+                                    <p class="card-text small">Template for ORF source information</p>
+                                    <button class="btn btn-sm btn-outline-primary download-template" data-type="orf_sources" data-format="csv">CSV</button>
+                                    <button class="btn btn-sm btn-outline-success download-template" data-type="orf_sources" data-format="xlsx">Excel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-2">
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
                                     <h5 class="card-title">Plasmid</h5>
                                     <p class="card-text small">Template for plasmid data</p>
                                     <button class="btn btn-sm btn-outline-primary download-template" data-type="plasmid" data-format="csv">CSV</button>
@@ -111,9 +137,6 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="row mt-2">
                         <div class="col-md-4 mb-3">
                             <div class="card h-100">
                                 <div class="card-body">

@@ -88,3 +88,17 @@
 2025-04-07 00:17:34,033 - app.routes.blast - INFO - BLAST search found 1 hits
 2025-04-07 00:17:34,033 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:34] "POST /api/blast_search HTTP/1.1" 200 -
 2025-04-07 00:17:36,576 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:36] "GET /view/orf/11576 HTTP/1.1" 200 -
+2025-04-07 00:19:59,720 - root - INFO - Application starting
+2025-04-07 00:20:12,036 - app.blast_simple - INFO - BLAST+ installed: blastn: 2.16.0+
+2025-04-07 00:20:12,037 - app.blast_simple - INFO - BLAST database found at /Users/chung-wen.lin/Git_repo/reagent_db/blast_db/reagent_db_nucl.nsq
+2025-04-07 00:20:12,039 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:20:12] "GET /blast HTTP/1.1" 200 -
+2025-04-07 00:20:14,023 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:20:14] "GET / HTTP/1.1" 200 -
+2025-04-07 00:20:14,135 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:20:14] "GET /api/search_organisms HTTP/1.1" 200 -
+2025-04-07 00:20:14,207 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:20:14] "GET /api/search_examples HTTP/1.1" 200 -
+2025-04-07 00:20:14,893 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:20:14] "GET /batch_search HTTP/1.1" 200 -
+2025-04-07 00:20:14,999 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:20:14] "GET /api/search_organisms HTTP/1.1" 200 -
+2025-04-07 00:20:16,067 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:20:16] "GET / HTTP/1.1" 200 -
+2025-04-07 00:20:16,191 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:20:16] "GET /api/search_organisms HTTP/1.1" 200 -
+2025-04-07 00:20:16,215 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:20:16] "GET /api/search_examples HTTP/1.1" 200 -
+2025-04-07 00:20:21,357 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:20:21] "POST /search HTTP/1.1" 200 -
+2025-04-07 00:20:24,964 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:20:24] "GET /view/orf/3233 HTTP/1.1" 200 -
