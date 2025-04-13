@@ -1,0 +1,8 @@
+orf_id,orf_name,orf_annotation,orf_sequence,entry_position,yeast_ad_position,yeast_db_position,source_name,source_details,orf_with_stop,orf_open,orf_organism_id,orf_length_bp,orf_entrez_id,orf_ensembl_id,orf_uniprot_id,orf_ref_url,freezer_id,plasmid_id
+Required,Required,Optional,Optional,Optional (Plate-Well format),Optional (Plate-Well format),Optional (Plate-Well format),Required,Optional,"Optional (1=yes, 0=no)","Optional (1=yes, 0=no)",Optional,Optional,Optional,Optional,Optional,Optional,Optional,Optional
+ORF001,BRCA1,Breast cancer type 1,ATGCATGCATGC,Plate1-A1,,,SourceLab1,Entry clone from Lab1,1,1,ORG001,12,672,ENSG00000012048,P38398,https://www.ncbi.nlm.nih.gov/gene/672,FRZ001,PLS001
+ORF002,TP53,Tumor protein p53,GTACGTACGTAC,,Plate2-B5,,SourceLab2,AD yeast clone from Lab2,0,1,ORG001,12,7157,ENSG00000141510,P04637,https://www.ncbi.nlm.nih.gov/gene/7157,,
+ORF003,KRAS,KRAS proto-oncogene,ACGTACGTACGT,,,Plate3-C3,SourceLab3,DB yeast clone from Lab3,1,0,ORG001,12,3845,ENSG00000133703,P01116,https://www.ncbi.nlm.nih.gov/gene/3845,,
+ORF004,EGFR,Epidermal growth factor receptor,GCATGCATGCAT,Plate4-D7,Plate4-D8,,SourceLab4,Combined entry and AD clone,1,1,ORG001,12,1956,ENSG00000146648,P00533,https://www.ncbi.nlm.nih.gov/gene/1956,FRZ002,PLS002
+ORF005,PTEN,"Phosphatidylinositol 3,4,5-trisphosphate 3-phosphatase",TGCATGCATGCA,,Plate5-E9,Plate5-E10,SourceLab5,Both AD and DB clones,0,1,ORG001,12,5728,ENSG00000171862,P60484,https://www.ncbi.nlm.nih.gov/gene/5728,,
+ORF006,AKT1,RAC-alpha serine/threonine-protein kinase,CGTAGCTAGCTA,Plate6-F11,Plate6-F12,Plate6-G1,SourceLab6,Complete set of positions,1,1,ORG001,12,207,ENSG00000142208,P31749,https://www.ncbi.nlm.nih.gov/gene/207,FRZ003,PLS003

@@ -126,10 +126,18 @@
                     <input type="text" class="form-control" id="query" required>
                     <div class="example-suggestions" id="queryExamples"></div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6 mb-3">
                     <label for="organismFilter" class="form-label">Filter by Organism</label>
                     <select id="organismFilter" class="form-select">
                         <option value="">All Organisms</option>
+                        <!-- Will be populated via JavaScript -->
+                    </select>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label for="sourceFilter" class="form-label">Filter by ORF Source</label>
+                    <select id="sourceFilter" class="form-select">
+                        <option value="">All Sources</option>
                         <!-- Will be populated via JavaScript -->
                     </select>
                 </div>
@@ -179,6 +187,16 @@
                 }
             })
             .catch(error => console.error('Error fetching organisms:', error));
+
+        // Fetch ORF sources for the dropdown
+        fetch('/api/orf_sources')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    populateSourceDropdown(data.sources);
+                }
+            })
+            .catch(error => console.error('Error fetching ORF sources:', error));
         
         <!-- Populate organism dropdown -->
         function populateOrganismDropdown(organisms) {
@@ -188,6 +206,16 @@
                 option.value = organism.organism_id;
                 option.textContent = organism.organism_name;
                 organismSelect.appendChild(option);
+            });
+        }
+        
+        function populateSourceDropdown(sources) {
+            const sourceSelect = document.getElementById('sourceFilter');
+            sources.forEach(source => {
+                const option = document.createElement('option');
+                option.value = source.source_name;
+                option.textContent = source.source_name;
+                sourceSelect.appendChild(option);
             });
         }
         
@@ -257,6 +285,7 @@
             const queryType = document.getElementById('queryType').value;
             const query = document.getElementById('query').value;
             const organismFilter = document.getElementById('organismFilter').value;
+            const sourceFilter = document.getElementById('sourceFilter').value;
             const matchType = document.querySelector('input[name="matchType"]:checked').value;
             
             // Construct the query parameters
@@ -268,6 +297,10 @@
             
             if (organismFilter) {
                 params.append('organism', organismFilter);
+            }
+            
+            if (sourceFilter) {
+                params.append('source', sourceFilter);
             }
             
             fetch(`/api/search?${params.toString()}`)

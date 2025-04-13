@@ -48,10 +48,18 @@
                         Searches are performed on gene names and ORF IDs only.
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <label for="organismSelect" class="form-label">Filter by Organism</label>
-                    <select class="form-select" id="organismSelect" name="organism_id">
+                <div class="col-md-4">
+                    <label for="organismFilter" class="form-label">Filter by Organism</label>
+                    <select id="organismFilter" name="organism_id" class="form-select">
                         <option value="">All Organisms</option>
+                        <!-- Will be populated via JavaScript -->
+                    </select>
+                </div>
+                
+                <div class="col-md-4">
+                    <label for="sourceFilter" class="form-label">Filter by ORF Source</label>
+                    <select id="sourceFilter" name="source_name" class="form-select">
+                        <option value="">All Sources</option>
                         <!-- Will be populated via JavaScript -->
                     </select>
                 </div>
@@ -108,14 +116,35 @@
             })
             .catch(error => console.error('Error fetching organisms:', error));
         
+        // Load ORF sources for dropdown
+        fetch('/api/orf_sources')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    populateSourceDropdown(data.sources);
+                }
+            })
+            .catch(error => console.error('Error fetching ORF sources:', error));
+        
         // Populate organism dropdown
         function populateOrganismDropdown(organisms) {
-            const organismSelect = document.getElementById('organismSelect');
+            const organismSelect = document.getElementById('organismFilter');
             organisms.forEach(organism => {
                 const option = document.createElement('option');
                 option.value = organism.organism_id;
                 option.textContent = organism.organism_name;
                 organismSelect.appendChild(option);
+            });
+        }
+        
+        // Populate source dropdown
+        function populateSourceDropdown(sources) {
+            const sourceSelect = document.getElementById('sourceFilter');
+            sources.forEach(source => {
+                const option = document.createElement('option');
+                option.value = source.source_name;
+                option.textContent = source.source_name;
+                sourceSelect.appendChild(option);
             });
         }
         
@@ -200,13 +229,19 @@
             // Add organism filter badge if present
             let organismBadge = '';
             if (data.organism_id) {
-                const organismSelect = document.getElementById('organismSelect');
+                const organismSelect = document.getElementById('organismFilter');
                 const selectedOption = organismSelect.options[organismSelect.selectedIndex];
                 const organismName = selectedOption ? selectedOption.textContent : 'Unknown';
                 organismBadge = `<span class="badge bg-primary ms-1">Organism: ${organismName}</span>`;
             }
             
-            summaryHeader.innerHTML = `Search Summary ${matchBadge} ${organismBadge}`;
+            // Add source filter badge if present
+            let sourceBadge = '';
+            if (data.source_name) {
+                sourceBadge = `<span class="badge bg-secondary ms-1">Source: ${data.source_name}</span>`;
+            }
+            
+            summaryHeader.innerHTML = `Search Summary ${matchBadge} ${organismBadge} ${sourceBadge}`;
             summaryCardBody.appendChild(summaryHeader);
             
             // Create summary details
@@ -398,7 +433,8 @@
                 const thead = document.createElement('thead');
                 const headerRow = document.createElement('tr');
                 
-                ['ORF ID', 'Name', 'Organism', 'External Links', 'Source', 'Entry', 'Yeast AD', 'Yeast DB'].forEach(header => {
+                // Update headers to combine source info with positions
+                ['ORF ID', 'Name', 'Organism', 'External Links', 'Entry Positions', 'Yeast Positions'].forEach(header => {
                     const th = document.createElement('th');
                     th.textContent = header;
                     headerRow.appendChild(th);
@@ -434,7 +470,6 @@
                         annotation.textContent = result.orf_annotation;
                         cell.appendChild(annotation);
                     }
-                    
                     row.appendChild(cell);
                     
                     // Organism
@@ -507,75 +542,98 @@
                     } else {
                         cell.appendChild(linkContainer);
                     }
-                    
                     row.appendChild(cell);
                     
-                    // Sources
-                    cell = document.createElement('td');
-                    if (result.sources && result.sources.length > 0) {
-                        const sourcesList = document.createElement('div');
-                        sourcesList.className = 'd-flex flex-column gap-1';
-                        
-                        // Show up to 3 sources with badges
-                        result.sources.slice(0, 3).forEach(source => {
-                            const sourceBadge = document.createElement('span');
-                            sourceBadge.className = 'badge bg-info';
-                            sourceBadge.textContent = source.source_name;
-                            sourceBadge.title = source.source_details || source.source_name;
-                            sourcesList.appendChild(sourceBadge);
-                        });
-                        
-                        // If there are more sources, add an indicator
-                        if (result.sources.length > 3) {
-                            const moreBadge = document.createElement('span');
-                            moreBadge.className = 'badge bg-secondary';
-                            moreBadge.textContent = `+${result.sources.length - 3} more`;
-                            moreBadge.title = 'View ORF details to see all sources';
-                            sourcesList.appendChild(moreBadge);
-                        }
-                        
-                        cell.appendChild(sourcesList);
-                    } else {
-                        cell.textContent = 'Unknown';
-                    }
-                    row.appendChild(cell);
-                    
-                    // Split positions into multiple columns
-                    // Entry positions
+                    // Entry positions with sources information
                     cell = document.createElement('td');
                     if (result.positions && result.positions.length > 0) {
-                        cell.innerHTML = result.positions.map(pos => `${pos.plate}-${pos.well}`).join('<br>');
+                        const positionsContainer = document.createElement('div');
+                        positionsContainer.className = 'd-flex flex-column gap-1';
+                        
+                        result.positions.forEach(pos => {
+                            const posItem = document.createElement('div');
+                            posItem.className = 'd-flex align-items-center gap-1';
+                            
+                            // Position information
+                            const posText = document.createElement('span');
+                            posText.textContent = `${pos.plate}-${pos.well}`;
+                            posItem.appendChild(posText);
+                            
+                            // Get relevant sources
+                            if (result.sources && result.sources.length > 0) {
+                                // Add a lightweight indicator if there are sources
+                                const sourceIndicator = document.createElement('span');
+                                sourceIndicator.className = 'badge bg-secondary badge-pill ms-1';
+                                sourceIndicator.textContent = result.sources.length;
+                                sourceIndicator.title = `${result.sources.length} source${result.sources.length > 1 ? 's' : ''} available`;
+                                posItem.appendChild(sourceIndicator);
+                            }
+                            
+                            positionsContainer.appendChild(posItem);
+                        });
+                        
+                        cell.appendChild(positionsContainer);
                     } else {
                         cell.textContent = 'None';
                     }
                     row.appendChild(cell);
                     
-                    // Yeast AD positions
+                    // Yeast positions (combining AD and DB with visual indicators)
                     cell = document.createElement('td');
                     if (result.yeast_positions && result.yeast_positions.length > 0) {
+                        const positionsContainer = document.createElement('div');
+                        positionsContainer.className = 'd-flex flex-column gap-1';
+                        
+                        // Group by type for clearer display
                         const adPositions = result.yeast_positions.filter(pos => 
                             !pos.position_type || pos.position_type === 'AD');
+                        const dbPositions = result.yeast_positions.filter(pos => 
+                            pos.position_type === 'DB');
                         
+                        // Display AD positions with badge
                         if (adPositions.length > 0) {
-                            cell.innerHTML = adPositions.map(pos => `${pos.plate}-${pos.well}`).join('<br>');
-                        } else {
-                            cell.textContent = 'None';
+                            const adGroup = document.createElement('div');
+                            adGroup.className = 'mb-1';
+                            
+                            const adBadge = document.createElement('span');
+                            adBadge.className = 'badge bg-primary me-2';
+                            adBadge.textContent = 'AD';
+                            adGroup.appendChild(adBadge);
+                            
+                            const adList = document.createElement('span');
+                            adList.textContent = adPositions.map(pos => `${pos.plate}-${pos.well}`).join(', ');
+                            adGroup.appendChild(adList);
+                            
+                            positionsContainer.appendChild(adGroup);
                         }
-                    } else {
-                        cell.textContent = 'None';
-                    }
-                    row.appendChild(cell);
-                    
-                    // Yeast DB positions
-                    cell = document.createElement('td');
-                    if (result.yeast_positions && result.yeast_positions.length > 0) {
-                        const dbPositions = result.yeast_positions.filter(pos => pos.position_type === 'DB');
                         
+                        // Display DB positions with badge
                         if (dbPositions.length > 0) {
-                            cell.innerHTML = dbPositions.map(pos => `${pos.plate}-${pos.well}`).join('<br>');
-                        } else {
-                            cell.textContent = 'None';
+                            const dbGroup = document.createElement('div');
+                            dbGroup.className = 'mb-1';
+                            
+                            const dbBadge = document.createElement('span');
+                            dbBadge.className = 'badge bg-success me-2';
+                            dbBadge.textContent = 'DB';
+                            dbGroup.appendChild(dbBadge);
+                            
+                            const dbList = document.createElement('span');
+                            dbList.textContent = dbPositions.map(pos => `${pos.plate}-${pos.well}`).join(', ');
+                            dbGroup.appendChild(dbList);
+                            
+                            positionsContainer.appendChild(dbGroup);
                         }
+                        
+                        // Add sources info if available
+                        if (result.sources && result.sources.length > 0) {
+                            const sourceInfo = document.createElement('div');
+                            sourceInfo.className = 'mt-1 small text-muted';
+                            sourceInfo.innerHTML = `<i class="bi bi-info-circle"></i> From ${result.sources.length} source${result.sources.length > 1 ? 's' : ''}`;
+                            sourceInfo.title = result.sources.map(s => s.source_name).join(', ');
+                            positionsContainer.appendChild(sourceInfo);
+                        }
+                        
+                        cell.appendChild(positionsContainer);
                     } else {
                         cell.textContent = 'None';
                     }

@@ -179,23 +179,99 @@ def get_column_info(import_type):
     return columns, example, required_fields
 
 def create_template_dataframe(import_type):
-    """Create a DataFrame template for the specified import type"""
-    columns, example, required_fields = get_column_info(import_type)
-    if not columns or not example or not required_fields:
-        return None
+    """
+    Create a template DataFrame for the specified import type
+    
+    Args:
+        import_type: The type of import data
         
-    # Create template DataFrame with example row
-    df = pd.DataFrame([example], columns=columns)
+    Returns:
+        DataFrame with template columns and example data
+    """
+    if import_type == 'unified_position':
+        data = {
+            # ORF basic information
+            'orf_id': ['Required', 'ORF001', 'ORF002', 'ORF003', 'ORF004', 'ORF005', 'ORF006'],
+            'orf_name': ['Required', 'BRCA1', 'TP53', 'KRAS', 'EGFR', 'PTEN', 'AKT1'],
+            'orf_annotation': ['Optional', 'Breast cancer type 1', 'Tumor protein p53', 'KRAS proto-oncogene', 'Epidermal growth factor receptor', 'Phosphatidylinositol 3,4,5-trisphosphate 3-phosphatase', 'RAC-alpha serine/threonine-protein kinase'],
+            'orf_sequence': ['Optional', 'ATGCATGCATGC', 'GTACGTACGTAC', 'ACGTACGTACGT', 'GCATGCATGCAT', 'TGCATGCATGCA', 'CGTAGCTAGCTA'],
+            
+            # Position information (direct format)
+            'entry_position': ['Optional (Plate-Well format)', 'Plate1-A1', '', '', 'Plate4-D7', '', 'Plate6-F11'],
+            'yeast_ad_position': ['Optional (Plate-Well format)', '', 'Plate2-B5', '', 'Plate4-D8', 'Plate5-E9', 'Plate6-F12'],
+            'yeast_db_position': ['Optional (Plate-Well format)', '', '', 'Plate3-C3', '', 'Plate5-E10', 'Plate6-G1'],
+            
+            # Source information
+            'source_name': ['Required', 'SourceLab1', 'SourceLab2', 'SourceLab3', 'SourceLab4', 'SourceLab5', 'SourceLab6'],
+            'source_details': ['Optional', 'Entry clone from Lab1', 'AD yeast clone from Lab2', 'DB yeast clone from Lab3', 'Combined entry and AD clone', 'Both AD and DB clones', 'Complete set of positions'],
+            
+            # ORF additional properties
+            'orf_with_stop': ['Optional (1=yes, 0=no)', 1, 0, 1, 1, 0, 1],
+            'orf_open': ['Optional (1=yes, 0=no)', 1, 1, 0, 1, 1, 1],
+            'orf_length_bp': ['Optional', 12, 12, 12, 12, 12, 12],
+            'orf_entrez_id': ['Optional', '672', '7157', '3845', '1956', '5728', '207'],
+            'orf_ensembl_id': ['Optional', 'ENSG00000012048', 'ENSG00000141510', 'ENSG00000133703', 'ENSG00000146648', 'ENSG00000171862', 'ENSG00000142208'],
+            'orf_uniprot_id': ['Optional', 'P38398', 'P04637', 'P01116', 'P00533', 'P60484', 'P31749'],
+            'orf_ref_url': ['Optional', 'https://www.ncbi.nlm.nih.gov/gene/672', 'https://www.ncbi.nlm.nih.gov/gene/7157', 'https://www.ncbi.nlm.nih.gov/gene/3845', 'https://www.ncbi.nlm.nih.gov/gene/1956', 'https://www.ncbi.nlm.nih.gov/gene/5728', 'https://www.ncbi.nlm.nih.gov/gene/207'],
+            
+            # Organism information
+            'organism_id': ['Optional', 'ORG001', 'ORG001', 'ORG001', 'ORG002', 'ORG003', 'ORG004'],
+            'organism_name': ['Optional', 'Human', 'Human', 'Human', 'Mouse', 'Yeast', 'Bacteria'],
+            'organism_genus': ['Optional', 'Homo', 'Homo', 'Homo', 'Mus', 'Saccharomyces', 'Escherichia'],
+            'organism_species': ['Optional', 'sapiens', 'sapiens', 'sapiens', 'musculus', 'cerevisiae', 'coli'],
+            'organism_strain': ['Optional', '', '', '', 'C57BL/6', 'Y8930', 'BL21'],
+            
+            # Freezer information
+            'freezer_id': ['Optional', 'FRZ001', 'FRZ002', 'FRZ003', 'FRZ004', 'FRZ005', 'FRZ006'],
+            'freezer_location': ['Optional', 'Lab 101 - Main', 'Lab 102 - Secondary', 'Lab 103 - Backup', 'Lab 104', 'Lab 105', 'Lab 106'],
+            'freezer_condition': ['Optional', '-80C', '-20C', '-80C', '-80C', '-20C', 'Liquid Nitrogen'],
+            
+            # Plasmid information
+            'plasmid_id': ['Optional', 'PLS001', 'PLS002', 'PLS003', 'PLS004', 'PLS005', 'PLS006'],
+            'plasmid_name': ['Optional', 'pDEST-GW', 'pDEST-AD', 'pDEST-DB', 'pENTR-D', 'pENTR221', 'pETG30A'],
+            'plasmid_type': ['Optional', 'Destination', 'Destination', 'Destination', 'Entry', 'Entry', 'Expression'],
+            'plasmid_express_organism': ['Optional', 'E. coli', 'Yeast', 'Yeast', 'E. coli', 'E. coli', 'Bacteria'],
+            'plasmid_description': ['Optional', 'Gateway destination vector', 'Yeast two-hybrid AD vector', 'Yeast two-hybrid DB vector', 'Gateway entry vector', 'Gateway entry vector with kanamycin resistance', 'Bacterial expression vector with GST tag']
+        }
+        return pd.DataFrame(data)
     
-    # Add a row with just required fields
-    required = {}
-    for col in columns:
-        if col in required_fields:
-            required[col] = 'Required'
-        else:
-            required[col] = 'Optional'
+    elif import_type == 'plasmid':
+        data = {
+            'plasmid_id': ['Required', 'PLS001', 'PLS002', 'PLS003'],
+            'plasmid_name': ['Required', 'pDEST-AD', 'pDEST-DB', 'pENTR-D-TOPO'],
+            'plasmid_type': ['Optional', 'Destination', 'Destination', 'Entry'],
+            'plasmid_express_organism': ['Optional', 'Yeast', 'Yeast', 'E. coli'],
+            'plasmid_description': ['Optional', 'Yeast two-hybrid AD vector', 'Yeast two-hybrid DB vector', 'Gateway entry vector']
+        }
+        return pd.DataFrame(data)
     
-    df2 = pd.DataFrame([required], columns=columns)
+    elif import_type == 'organism':
+        data = {
+            'organism_id': ['Required', 'ORG001', 'ORG002', 'ORG003'],
+            'organism_name': ['Required', 'Human', 'Mouse', 'Yeast'],
+            'organism_genus': ['Optional', 'Homo', 'Mus', 'Saccharomyces'],
+            'organism_species': ['Optional', 'sapiens', 'musculus', 'cerevisiae'],
+            'organism_strain': ['Optional', '', 'C57BL/6', 'Y8930']
+        }
+        return pd.DataFrame(data)
     
-    # Combine
-    return pd.concat([df, df2], ignore_index=True)
+    elif import_type == 'freezer':
+        data = {
+            'freezer_id': ['Required', 'FRZ001', 'FRZ002', 'FRZ003'],
+            'freezer_location': ['Required', 'Lab 101 - Main', 'Lab 203 - Backup', 'Storage Room B'],
+            'freezer_condition': ['Optional', '-80C', '-20C', 'Liquid Nitrogen'],
+            'freezer_date': ['Optional', '2023-01-15', '2023-02-20', '2023-03-25']
+        }
+        return pd.DataFrame(data)
+    
+    # Fallback to support legacy code (these can be removed once the new system is fully tested)
+    elif import_type == 'orf_sequence':
+        return create_template_dataframe('unified_position')
+    elif import_type == 'orf_position':
+        return create_template_dataframe('unified_position') 
+    elif import_type == 'yeast_orf_position':
+        return create_template_dataframe('unified_position')
+    elif import_type == 'orf_sources':
+        return create_template_dataframe('unified_position')
+    
+    return None

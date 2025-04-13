@@ -312,19 +312,24 @@
     </div>
 </div>
 
+{% if data.sources and data.sources|length > 0 %}
 <div class="detail-section">
     <div class="card">
-        <div class="card-header">
-            <h4>ORF Sources</h4>
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4>ORF Data Sources</h4>
+            <span class="badge bg-info fs-6">{{ data.sources|length }} Source{{ 's' if data.sources|length > 1 else '' }}</span>
         </div>
         <div class="card-body">
-            {% if data.sources and data.sources|length > 0 %}
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> Sources indicate where ORF data and positions originated from. Multiple sources for the same ORF indicate it has been independently confirmed or used in different experiments.
+            </div>
             <div class="table-responsive">
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr>
                             <th>Source</th>
                             <th>Details</th>
+                            <th>Related Positions</th>
                             <th>Submission Date</th>
                         </tr>
                     </thead>
@@ -332,23 +337,38 @@
                         {% for source in data.sources %}
                         <tr>
                             <td>
-                                <span class="badge bg-primary">{{ source.source_name }}</span>
+                                <span class="badge bg-primary p-2 fs-6">{{ source.source_name }}</span>
                             </td>
                             <td>{{ source.source_details or 'No additional details' }}</td>
+                            <td>
+                                {% if data.positions and data.positions|length > 0 %}
+                                <div class="badge bg-secondary p-2">Entry Positions</div>
+                                {% endif %}
+                                
+                                {% if data.yeast_positions and data.yeast_positions|length > 0 %}
+                                <div>
+                                    {% set ad_positions = data.yeast_positions|selectattr('position_type', 'undefined')|list + data.yeast_positions|selectattr('position_type', 'equalto', 'AD')|list %}
+                                    {% if ad_positions|length > 0 %}
+                                    <div class="badge bg-primary p-2">AD Positions ({{ ad_positions|length }})</div>
+                                    {% endif %}
+                                    
+                                    {% set db_positions = data.yeast_positions|selectattr('position_type', 'equalto', 'DB')|list %}
+                                    {% if db_positions|length > 0 %}
+                                    <div class="badge bg-success p-2">DB Positions ({{ db_positions|length }})</div>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </td>
                             <td>{{ source.submission_date or 'Unknown' }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-            {% else %}
-            <div class="alert alert-info">
-                No source information available for this ORF.
-            </div>
-            {% endif %}
         </div>
     </div>
 </div>
+{% endif %}
 
 {% if data.orf_sequence %}
 <div class="detail-section">

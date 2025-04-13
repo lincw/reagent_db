@@ -43,10 +43,7 @@
                             <label for="importType" class="form-label">Import Type</label>
                             <select class="form-select" id="importType" name="import_type" required>
                                 <option value="" selected disabled>Select type</option>
-                                <option value="orf_sequence">ORF Sequence</option>
-                                <option value="orf_position">ORF Position</option>
-                                <option value="yeast_orf_position">Yeast ORF Position</option>
-                                <option value="orf_sources">ORF Sources</option>
+                                <option value="unified_position">ORF Data (Sequences, Positions & Sources)</option>
                                 <option value="plasmid">Plasmid</option>
                                 <option value="organism">Organism</option>
                                 <option value="freezer">Freezer</option>
@@ -87,46 +84,13 @@
                         <div class="col-md-4 mb-3">
                             <div class="card h-100">
                                 <div class="card-body">
-                                    <h5 class="card-title">ORF Sequence</h5>
-                                    <p class="card-text small">Template for gene/ORF sequence data</p>
-                                    <button class="btn btn-sm btn-outline-primary download-template" data-type="orf_sequence" data-format="csv">CSV</button>
-                                    <button class="btn btn-sm btn-outline-success download-template" data-type="orf_sequence" data-format="xlsx">Excel</button>
+                                    <h5 class="card-title">ORF Data</h5>
+                                    <p class="card-text small">Unified template for ORF sequences, positions, and sources</p>
+                                    <button class="btn btn-sm btn-outline-primary download-template" data-type="unified_position" data-format="csv">CSV</button>
+                                    <button class="btn btn-sm btn-outline-success download-template" data-type="unified_position" data-format="xlsx">Excel</button>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <h5 class="card-title">ORF Position</h5>
-                                    <p class="card-text small">Template for gene/ORF physical locations</p>
-                                    <button class="btn btn-sm btn-outline-primary download-template" data-type="orf_position" data-format="csv">CSV</button>
-                                    <button class="btn btn-sm btn-outline-success download-template" data-type="orf_position" data-format="xlsx">Excel</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <h5 class="card-title">Yeast ORF Position</h5>
-                                    <p class="card-text small">Template for yeast clone positions</p>
-                                    <button class="btn btn-sm btn-outline-primary download-template" data-type="yeast_orf_position" data-format="csv">CSV</button>
-                                    <button class="btn btn-sm btn-outline-success download-template" data-type="yeast_orf_position" data-format="xlsx">Excel</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <h5 class="card-title">ORF Sources</h5>
-                                    <p class="card-text small">Template for ORF source information</p>
-                                    <button class="btn btn-sm btn-outline-primary download-template" data-type="orf_sources" data-format="csv">CSV</button>
-                                    <button class="btn btn-sm btn-outline-success download-template" data-type="orf_sources" data-format="xlsx">Excel</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="row mt-2">
                         <div class="col-md-4 mb-3">
                             <div class="card h-100">
                                 <div class="card-body">
